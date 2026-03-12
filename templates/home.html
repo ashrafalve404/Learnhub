@@ -1,0 +1,1950 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}LearnHub - Master New Skills Online{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+<style>
+/* ── Design Tokens ─────────────────────────────────────────── */
+:root {
+    --brand:        #2563EB;
+    --brand-dark:   #1D4ED8;
+    --brand-light:  #EFF6FF;
+    --brand-mid:    #DBEAFE;
+    --accent:       #F59E0B;
+    --accent-dark:  #D97706;
+    --success:      #059669;
+    --ink:          #0F172A;
+    --ink-2:        #1E293B;
+    --muted:        #64748B;
+    --muted-2:      #94A3B8;
+    --border:       #E2E8F0;
+    --border-2:     #CBD5E1;
+    --surface:      #F8FAFC;
+    --white:        #FFFFFF;
+    --radius-sm:    6px;
+    --radius-md:    12px;
+    --radius-lg:    18px;
+    --radius-xl:    24px;
+    --shadow-sm:    0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+    --shadow-md:    0 4px 16px rgba(15,23,42,.08), 0 2px 6px rgba(15,23,42,.05);
+    --shadow-lg:    0 12px 40px rgba(15,23,42,.10), 0 4px 12px rgba(15,23,42,.06);
+    --shadow-xl:    0 24px 64px rgba(15,23,42,.13), 0 8px 24px rgba(15,23,42,.08);
+    --font-display: 'Bricolage Grotesque', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+    --transition:   all .2s cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); color: var(--ink); background: var(--white); -webkit-font-smoothing: antialiased; }
+
+/* ── Scroll Reveal ─────────────────────────────────────────── */
+.reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity .7s cubic-bezier(.4,0,.2,1), transform .7s cubic-bezier(.4,0,.2,1);
+}
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+.reveal-delay-4 { transition-delay: .4s; }
+.reveal-left {
+    opacity: 0; transform: translateX(-32px);
+    transition: opacity .7s cubic-bezier(.4,0,.2,1), transform .7s cubic-bezier(.4,0,.2,1);
+}
+.reveal-right {
+    opacity: 0; transform: translateX(32px);
+    transition: opacity .7s cubic-bezier(.4,0,.2,1), transform .7s cubic-bezier(.4,0,.2,1);
+}
+.reveal-left.visible, .reveal-right.visible { opacity: 1; transform: none; }
+
+/* ── Hero ──────────────────────────────────────────────────── */
+.hero {
+    position: relative;
+    background: linear-gradient(160deg, #0F172A 0%, #1E293B 50%, #162040 100%);
+    overflow: hidden;
+    min-height: 680px;
+    display: flex;
+    align-items: center;
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 70% 60% at 80% 50%, rgba(37,99,235,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 10% 80%, rgba(139,92,246,.12) 0%, transparent 60%);
+}
+.hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+}
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(37,99,235,.15);
+    border: 1px solid rgba(37,99,235,.3);
+    color: #93C5FD;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+}
+.hero-badge .dot {
+    width: 6px; height: 6px;
+    background: #60A5FA;
+    border-radius: 50%;
+    animation: blink 1.8s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(42px, 5.5vw, 72px);
+    font-weight: 800;
+    line-height: 1.06;
+    color: #F8FAFC;
+    letter-spacing: -.02em;
+    margin-bottom: 24px;
+}
+.hero h1 .highlight {
+    background: linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.hero p { font-size: 18px; line-height: 1.7; color: #94A3B8; max-width: 480px; margin-bottom: 36px; }
+.btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--brand); color: #fff;
+    font-family: var(--font-body); font-size: 15px; font-weight: 500;
+    padding: 14px 28px; border-radius: var(--radius-md);
+    border: none; cursor: pointer; text-decoration: none;
+    transition: var(--transition);
+}
+.btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,.35); }
+.btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.07); color: #E2E8F0;
+    font-family: var(--font-body); font-size: 15px; font-weight: 500;
+    padding: 14px 28px; border-radius: var(--radius-md);
+    border: 1px solid rgba(255,255,255,.12);
+    cursor: pointer; text-decoration: none; transition: var(--transition);
+}
+.btn-secondary:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.2); transform: translateY(-1px); }
+.hero-stats {
+    display: flex; align-items: center; gap: 32px;
+    margin-top: 40px; padding-top: 32px;
+    border-top: 1px solid rgba(255,255,255,.08);
+}
+.hero-stat-num { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: #F1F5F9; }
+.hero-stat-label { font-size: 12px; color: #64748B; margin-top: 2px; }
+.hero-visual { position: relative; }
+.hero-img { width: 100%; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); display: block; }
+.float-card {
+    position: absolute;
+    background: rgba(15,23,42,.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 10px;
+    white-space: nowrap; box-shadow: var(--shadow-lg);
+}
+.float-card .icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.float-card .label { font-size: 11px; color: #64748B; }
+.float-card .value { font-size: 13px; font-weight: 600; color: #F1F5F9; line-height: 1.2; }
+@keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+.float-card-1 { bottom: 28px; left: -28px; animation: floatY 5s ease-in-out infinite; }
+.float-card-2 { top: 24px; right: -24px; animation: floatY 6s ease-in-out infinite .8s; }
+.float-card-3 { top: 50%; left: -36px; animation: floatY 7s ease-in-out infinite 1.5s; }
+.avatar-stack { display: flex; }
+.avatar-stack img { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #1E293B; margin-left: -8px; }
+.avatar-stack img:first-child { margin-left: 0; }
+
+/* ── Stats Bar ────────────────────────────────────────────── */
+.stats-bar {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    padding: 32px 48px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    position: relative; z-index: 20; margin-top: -40px;
+}
+.stat-item { text-align: center; position: relative; padding: 8px 0; }
+.stat-item + .stat-item::before { content: ''; position: absolute; left: 0; top: 10%; bottom: 10%; width: 1px; background: var(--border); }
+.stat-item .num {
+    font-family: var(--font-display); font-size: 36px; font-weight: 800;
+    background: linear-gradient(135deg, var(--brand) 0%, #7C3AED 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    line-height: 1; margin-bottom: 6px;
+}
+.stat-item .lbl { font-size: 13px; color: var(--muted); }
+
+/* ── Logo Ticker ──────────────────────────────────────────── */
+.ticker-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 28px 0; overflow: hidden; }
+.ticker-label { text-align: center; font-size: 11px; font-weight: 600; color: var(--muted-2); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 20px; }
+.ticker-track-wrap { overflow: hidden; }
+.ticker-track { display: inline-flex; animation: ticker 28s linear infinite; white-space: nowrap; }
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.ticker-item { display: inline-flex; align-items: center; gap: 10px; padding: 0 40px; color: #94A3B8; font-size: 15px; font-weight: 600; transition: color .2s; }
+.ticker-item:hover { color: var(--muted); }
+.ticker-item i { font-size: 22px; }
+
+/* ── Section Headers ──────────────────────────────────────── */
+.section-tag {
+    display: inline-block; background: var(--brand-light); color: var(--brand);
+    font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 100px; margin-bottom: 14px;
+}
+.section-title { font-family: var(--font-display); font-size: clamp(28px, 3.5vw, 40px); font-weight: 800; color: var(--ink); letter-spacing: -.02em; line-height: 1.15; }
+.section-sub { font-size: 16px; color: var(--muted); line-height: 1.65; max-width: 520px; margin: 12px auto 0; }
+
+/* ── Feature Cards ────────────────────────────────────────── */
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+@media(max-width:900px){ .feature-grid{ grid-template-columns: 1fr; } }
+.feature-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 32px; transition: var(--transition); position: relative; overflow: hidden;
+}
+.feature-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--brand-light) 0%, transparent 60%); opacity: 0; transition: opacity .3s; }
+.feature-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: #BFDBFE; }
+.feature-card:hover::before { opacity: 1; }
+.feature-icon { width: 52px; height: 52px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 20px; position: relative; }
+.feature-card h3 { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 10px; position: relative; }
+.feature-card p { font-size: 14px; color: var(--muted); line-height: 1.7; position: relative; }
+
+/* ── Category Cards ───────────────────────────────────────── */
+.cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media(max-width:900px){ .cat-grid{ grid-template-columns: repeat(2,1fr); } }
+.cat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 20px; text-align: center; text-decoration: none; transition: var(--transition); display: block; }
+.cat-card:hover { border-color: var(--brand); box-shadow: var(--shadow-md); transform: translateY(-4px); }
+.cat-icon { width: 56px; height: 56px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 14px; transition: var(--transition); }
+.cat-card:hover .cat-icon { transform: scale(1.1); }
+.cat-card h3 { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.cat-card p  { font-size: 12px; color: var(--muted-2); }
+
+/* ── Course Carousel ──────────────────────────────────────── */
+.carousel-outer { overflow: hidden; }
+.carousel-track { display: flex; gap: 20px; transition: transform .5s cubic-bezier(.4,0,.2,1); will-change: transform; }
+.course-slide { flex: none; }
+.course-card-wrap {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); overflow: hidden; height: 100%;
+    display: flex; flex-direction: column; transition: var(--transition);
+}
+.course-card-wrap:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: #BFDBFE; }
+.course-thumb { position: relative; height: 176px; overflow: hidden; background: linear-gradient(135deg, #1E3A8A 0%, #4C1D95 100%); display: flex; align-items: center; justify-content: center; }
+.course-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.course-thumb .no-img { font-size: 44px; color: rgba(255,255,255,.5); }
+.course-badge { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; }
+.badge-bestseller { background: #1D4ED8; color: #fff; }
+.badge-sale       { background: #DC2626; color: #fff; }
+.badge-new        { background: #059669; color: #fff; }
+.course-duration { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,.65); backdrop-filter: blur(8px); color: #fff; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 100px; display: flex; align-items: center; gap: 4px; }
+.wishlist { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.95); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted-2); font-size: 13px; transition: var(--transition); box-shadow: var(--shadow-sm); }
+.wishlist:hover { color: #DC2626; transform: scale(1.1); }
+.course-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
+.course-meta { font-size: 11px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: .06em; }
+.course-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--ink); line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.course-instructor { font-size: 12px; color: var(--muted); }
+.stars { display: flex; align-items: center; gap: 4px; }
+.stars .rating-num { font-size: 13px; font-weight: 700; color: #D97706; }
+.stars .star-icons { color: #F59E0B; font-size: 11px; letter-spacing: -.5px; }
+.stars .review-count { font-size: 11px; color: var(--muted-2); }
+.course-students { font-size: 12px; color: var(--muted-2); display: flex; align-items: center; gap: 5px; }
+.course-footer { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.price-now  { font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--ink); }
+.price-was  { font-size: 12px; color: var(--muted-2); text-decoration: line-through; margin-left: 6px; }
+.price-free { font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--success); }
+.enroll-btn { display: inline-flex; align-items: center; gap: 5px; background: var(--brand-light); color: var(--brand); font-size: 12px; font-weight: 600; padding: 8px 16px; border-radius: var(--radius-sm); text-decoration: none; transition: var(--transition); border: 1px solid transparent; }
+.enroll-btn:hover { background: var(--brand); color: #fff; }
+.filter-wrap { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+.filter-pill { padding: 7px 18px; border-radius: 100px; border: 1px solid var(--border-2); background: var(--white); color: var(--muted); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
+.filter-pill:hover { border-color: var(--brand); color: var(--brand); }
+.filter-pill.active { background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 600; }
+.progress-dots { display: flex; gap: 5px; align-items: center; }
+.pdot { height: 6px; border-radius: 3px; background: var(--border-2); transition: all .3s; cursor: pointer; }
+.pdot.active { background: var(--brand); width: 22px !important; }
+.carousel-nav { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-2); background: var(--white); color: var(--ink); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: var(--transition); box-shadow: var(--shadow-sm); }
+.carousel-nav:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+/* ── How It Works ─────────────────────────────────────────── */
+.hiw-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 40px; position: relative; }
+@media(max-width:900px){ .hiw-grid{ grid-template-columns:1fr; gap:24px; } }
+.hiw-grid::before { content: ''; position: absolute; top: 32px; left: 15%; right: 15%; height: 1px; background: linear-gradient(90deg, transparent, var(--border-2) 20%, var(--border-2) 80%, transparent); }
+@media(max-width:900px){ .hiw-grid::before{ display:none; } }
+.hiw-step { text-align: center; }
+.hiw-num { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 22px; font-weight: 800; margin: 0 auto 20px; position: relative; z-index: 1; }
+.hiw-step h3 { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+.hiw-step p  { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── Testimonials ─────────────────────────────────────────── */
+.testimonial-section { background: linear-gradient(160deg, #0F172A 0%, #1E293B 100%); position: relative; overflow: hidden; }
+.testimonial-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(37,99,235,.12) 0%, transparent 70%); }
+.testimonial-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+@media(max-width:900px){ .testimonial-grid{ grid-template-columns:1fr; } }
+.tcard { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius-lg); padding: 28px; backdrop-filter: blur(12px); transition: var(--transition); }
+.tcard:hover { background: rgba(255,255,255,.08); border-color: rgba(37,99,235,.35); transform: translateY(-4px); }
+.tcard .quote { font-size: 32px; line-height: 1; color: #2563EB; margin-bottom: 16px; font-family: Georgia, serif; }
+.tcard p { font-size: 14px; color: #94A3B8; line-height: 1.75; margin-bottom: 20px; }
+.tcard-footer { display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.07); }
+.tcard-footer img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid rgba(37,99,235,.4); }
+.tcard-footer .name { font-size: 14px; font-weight: 600; color: #F1F5F9; }
+.tcard-footer .role { font-size: 12px; color: #64748B; }
+.tcard .stars-row { display: flex; gap: 2px; color: #F59E0B; font-size: 12px; margin-bottom: 14px; }
+
+/* ── Instructor CTA ───────────────────────────────────────── */
+.instructor-section { background: var(--ink); position: relative; overflow: hidden; }
+.instructor-section::after { content: ''; position: absolute; right: -120px; top: -120px; width: 480px; height: 480px; border-radius: 50%; background: radial-gradient(circle, rgba(37,99,235,.12) 0%, transparent 70%); }
+.instr-perks { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 36px; }
+@media(max-width:900px){ .instr-perks{ grid-template-columns:1fr; } }
+.perk-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: var(--radius-md); padding: 24px; transition: var(--transition); }
+.perk-card:hover { background: rgba(255,255,255,.07); border-color: rgba(37,99,235,.3); }
+.perk-card i { font-size: 28px; margin-bottom: 12px; display: block; }
+.perk-card h4 { font-size: 14px; font-weight: 600; color: #F1F5F9; margin-bottom: 6px; }
+.perk-card p  { font-size: 13px; color: #64748B; line-height: 1.6; }
+
+/* ── FAQ ──────────────────────────────────────────────────── */
+.faq-item { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; transition: var(--transition); }
+.faq-item:hover { border-color: var(--border-2); box-shadow: var(--shadow-sm); }
+.faq-btn { width: 100%; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; background: none; border: none; cursor: pointer; text-align: left; }
+.faq-btn span { font-size: 15px; font-weight: 600; color: var(--ink); }
+.faq-btn i { font-size: 13px; color: var(--muted); transition: transform .25s; }
+.faq-body { padding: 0 24px 18px; font-size: 14px; color: var(--muted); line-height: 1.75; }
+
+/* ── Final CTA ────────────────────────────────────────────── */
+.final-cta { background: linear-gradient(135deg, var(--brand) 0%, #4F46E5 100%); position: relative; overflow: hidden; }
+.final-cta::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 40px 40px; }
+.btn-white { display: inline-flex; align-items: center; gap: 8px; background: var(--white); color: var(--brand); font-size: 15px; font-weight: 600; padding: 14px 32px; border-radius: var(--radius-md); border: none; cursor: pointer; text-decoration: none; transition: var(--transition); box-shadow: 0 4px 20px rgba(0,0,0,.2); }
+.btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.25); background: #F8FAFC; }
+
+/* ── Misc ─────────────────────────────────────────────────── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.section-pad { padding: 96px 0; }
+@media(max-width:768px){ .section-pad{ padding:64px 0; } }
+
+/* ════════════════════════════════════════════════════════════
+   NEW SECTIONS
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Programming Languages ────────────────────────────────── */
+.lang-section {
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+}
+.lang-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 20% 50%, rgba(37,99,235,.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(124,58,237,.08) 0%, transparent 50%);
+}
+.lang-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+@media(max-width:900px){ .lang-grid{ grid-template-columns: repeat(2,1fr); } }
+.lang-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: var(--radius-lg);
+    padding: 24px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+.lang-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    opacity: 0;
+    transition: opacity .3s;
+}
+.lang-card:hover { transform: translateY(-6px); border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.07); }
+.lang-card:hover::before { opacity: 1; }
+.lang-icon {
+    width: 64px; height: 64px;
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+    font-size: 30px;
+    transition: var(--transition);
+}
+.lang-card:hover .lang-icon { transform: scale(1.1) rotate(-3deg); }
+.lang-card h3 { font-size: 15px; font-weight: 700; color: #F1F5F9; margin-bottom: 4px; }
+.lang-card p  { font-size: 12px; color: #64748B; margin-bottom: 12px; }
+.lang-level {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; color: #94A3B8;
+    background: rgba(255,255,255,.06);
+    padding: 3px 10px; border-radius: 100px;
+}
+.lang-card .courses-count {
+    font-size: 12px; color: var(--muted-2);
+    margin-top: 8px;
+}
+
+/* Language colors */
+.lang-python .lang-icon  { background: rgba(55,175,221,.12); color: #37AFDD; }
+.lang-python::before     { background: linear-gradient(90deg, #37AFDD, #FFD43B); }
+.lang-js .lang-icon      { background: rgba(240,219,79,.12); color: #F0DB4F; }
+.lang-js::before         { background: linear-gradient(90deg, #F0DB4F, #F7DF1E); }
+.lang-java .lang-icon    { background: rgba(248,152,32,.12); color: #F89820; }
+.lang-java::before       { background: linear-gradient(90deg, #F89820, #5382A1); }
+.lang-react .lang-icon   { background: rgba(97,218,251,.12); color: #61DAFB; }
+.lang-react::before      { background: linear-gradient(90deg, #61DAFB, #764ABC); }
+.lang-cpp .lang-icon     { background: rgba(0,89,157,.15); color: #00599D; }
+.lang-cpp::before        { background: linear-gradient(90deg, #00599D, #659AD2); }
+.lang-swift .lang-icon   { background: rgba(255,95,41,.12); color: #FF5F29; }
+.lang-swift::before      { background: linear-gradient(90deg, #FF5F29, #FF8A5C); }
+.lang-sql .lang-icon     { background: rgba(0,117,143,.12); color: #00758F; }
+.lang-sql::before        { background: linear-gradient(90deg, #00758F, #F29111); }
+.lang-go .lang-icon      { background: rgba(0,173,216,.12); color: #00ADD8; }
+.lang-go::before         { background: linear-gradient(90deg, #00ADD8, #5DC9E2); }
+
+/* ── Learning Roadmap ─────────────────────────────────────── */
+.roadmap-section { background: var(--surface); overflow: hidden; position: relative; }
+.roadmap-tabs {
+    display: flex; gap: 8px; margin-bottom: 40px; flex-wrap: wrap;
+}
+.rtab {
+    padding: 10px 22px;
+    border-radius: 100px;
+    border: 1px solid var(--border-2);
+    background: var(--white);
+    color: var(--muted);
+    font-size: 14px; font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex; align-items: center; gap: 8px;
+}
+.rtab:hover { border-color: var(--brand); color: var(--brand); }
+.rtab.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+.rtab i { font-size: 14px; }
+.roadmap-content { display: none; }
+.roadmap-content.active { display: block; }
+.roadmap-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+}
+@media(max-width:900px){ .roadmap-grid{ grid-template-columns:1fr; } }
+.roadmap-steps { position: relative; }
+.roadmap-step {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 0 0 32px;
+    position: relative;
+}
+.roadmap-step:last-child { padding-bottom: 0; }
+.roadmap-step::before {
+    content: '';
+    position: absolute;
+    left: 19px; top: 40px; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--border-2), transparent);
+}
+.roadmap-step:last-child::before { display: none; }
+.step-num {
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+    font-family: var(--font-display);
+    border: 2px solid var(--border);
+    background: var(--white);
+    color: var(--muted);
+    transition: var(--transition);
+    position: relative; z-index: 1;
+}
+.roadmap-step.done .step-num { background: var(--success); color: #fff; border-color: var(--success); }
+.roadmap-step.current .step-num { background: var(--brand); color: #fff; border-color: var(--brand); box-shadow: 0 0 0 4px rgba(37,99,235,.2); }
+.step-info { flex: 1; }
+.step-info h4 { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.step-info p  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.step-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.step-tag { font-size: 11px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); padding: 3px 10px; border-radius: 100px; }
+.roadmap-visual {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 32px;
+    box-shadow: var(--shadow-md);
+}
+.roadmap-visual h4 { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.roadmap-visual p  { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+.skill-bar-wrap { margin-bottom: 16px; }
+.skill-bar-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink); font-weight: 500; margin-bottom: 6px; }
+.skill-bar-bg { height: 8px; background: var(--surface); border-radius: 100px; overflow: hidden; }
+.skill-bar-fill { height: 100%; border-radius: 100px; transition: width 1.2s cubic-bezier(.4,0,.2,1) .3s; width: 0; }
+.skill-bar-fill.animated { width: var(--target-width); }
+.outcome-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+.outcome-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; background: var(--brand-light); color: var(--brand); padding: 5px 12px; border-radius: 100px; font-weight: 500; }
+
+/* ── Student Tips ─────────────────────────────────────────── */
+.tips-section {
+    background: var(--white);
+    position: relative;
+    overflow: hidden;
+}
+.tips-section::after {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37,99,235,.04) 0%, transparent 70%);
+}
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+@media(max-width:900px){ .tips-grid{ grid-template-columns: 1fr; } }
+.tip-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+.tip-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    transition: var(--transition);
+}
+.tip-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); background: var(--white); }
+.tip-number {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 16px;
+    opacity: .08;
+    color: var(--ink);
+}
+.tip-icon {
+    width: 44px; height: 44px;
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+.tip-card h3 { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+.tip-card p  { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.tip-blue::after  { background: #3B82F6; }
+.tip-green::after { background: #10B981; }
+.tip-amber::after { background: #F59E0B; }
+.tip-purple::after{ background: #8B5CF6; }
+.tip-red::after   { background: #EF4444; }
+.tip-teal::after  { background: #14B8A6; }
+.tip-blue .tip-icon  { background: #EFF6FF; color: #3B82F6; }
+.tip-green .tip-icon { background: #F0FDF4; color: #10B981; }
+.tip-amber .tip-icon { background: #FFFBEB; color: #F59E0B; }
+.tip-purple .tip-icon{ background: #F5F3FF; color: #8B5CF6; }
+.tip-red .tip-icon   { background: #FEF2F2; color: #EF4444; }
+.tip-teal .tip-icon  { background: #F0FDFA; color: #14B8A6; }
+
+/* ── Trending Topics ──────────────────────────────────────── */
+.trending-section { background: var(--surface); overflow: hidden; }
+.trending-scroll {
+    display: flex; gap: 12px; overflow-x: auto;
+    padding-bottom: 12px; scrollbar-width: none;
+}
+.trending-scroll::-webkit-scrollbar { display: none; }
+.trend-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px 18px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    flex-shrink: 0;
+}
+.trend-chip:hover { border-color: var(--brand); box-shadow: var(--shadow-sm); transform: translateY(-2px); }
+.trend-chip i { font-size: 16px; }
+.trend-chip span { font-size: 13px; font-weight: 500; color: var(--ink); }
+.trend-chip small { font-size: 11px; color: var(--muted-2); background: var(--surface); padding: 2px 7px; border-radius: 100px; }
+.trend-up { color: #10B981; font-size: 10px; }
+
+/* ── Achievement / Counter ────────────────────────────────── */
+.counter-section {
+    background: linear-gradient(135deg, #1E1B4B 0%, #0F172A 100%);
+    position: relative;
+    overflow: hidden;
+}
+.counter-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 25% 75%, rgba(99,102,241,.15) 0%, transparent 50%),
+        radial-gradient(circle at 75% 25%, rgba(139,92,246,.1) 0%, transparent 50%);
+}
+.counter-grid {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 0;
+}
+@media(max-width:900px){ .counter-grid{ grid-template-columns: repeat(2,1fr); } }
+.counter-item {
+    text-align: center; padding: 48px 24px;
+    position: relative;
+    border-right: 1px solid rgba(255,255,255,.06);
+}
+.counter-item:last-child { border-right: none; }
+@media(max-width:900px){
+    .counter-item:nth-child(2) { border-right: none; }
+    .counter-item:nth-child(3) { border-right: 1px solid rgba(255,255,255,.06); }
+    .counter-item { border-bottom: 1px solid rgba(255,255,255,.06); }
+    .counter-item:nth-child(3), .counter-item:nth-child(4) { border-bottom: none; }
+}
+.counter-icon { font-size: 28px; margin-bottom: 16px; display: block; }
+.counter-num {
+    font-family: var(--font-display);
+    font-size: 44px; font-weight: 800;
+    background: linear-gradient(135deg, #818CF8, #A78BFA);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    line-height: 1; margin-bottom: 8px;
+}
+.counter-lbl { font-size: 14px; color: #64748B; }
+
+/* ── Job Outcome / Salary ─────────────────────────────────── */
+.outcome-section {
+    background: var(--white);
+    overflow: hidden;
+}
+.outcome-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+}
+@media(max-width:900px){ .outcome-grid{ grid-template-columns:1fr; gap:40px; } }
+.outcome-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 12px;
+    transition: var(--transition);
+}
+.outcome-card:hover { border-color: var(--brand); box-shadow: var(--shadow-sm); transform: translateX(4px); }
+.outcome-card:last-child { margin-bottom: 0; }
+.job-icon { width: 48px; height: 48px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.job-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.job-range { font-size: 13px; color: var(--muted); }
+.job-salary { margin-left: auto; text-align: right; }
+.salary-num { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--success); }
+.salary-period { font-size: 11px; color: var(--muted-2); }
+.salary-tag { display: inline-block; font-size: 11px; background: #F0FDF4; color: var(--success); padding: 2px 8px; border-radius: 100px; margin-top: 2px; }
+
+/* ── Tools & Resources ────────────────────────────────────── */
+.tools-section { background: var(--surface); overflow: hidden; }
+.tools-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+@media(max-width:900px){ .tools-grid{ grid-template-columns: repeat(2,1fr); } }
+.tool-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px 20px;
+    text-align: center;
+    transition: var(--transition);
+}
+.tool-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--border-2); }
+.tool-badge { display: inline-block; font-size: 10px; padding: 3px 8px; border-radius: 100px; margin-bottom: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.badge-free { background: #F0FDF4; color: #059669; }
+.badge-pro  { background: var(--brand-light); color: var(--brand); }
+.tool-icon { width: 52px; height: 52px; border-radius: var(--radius-md); margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.tool-card h3 { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.tool-card p  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ── Responsive global ────────────────────────────────────── */
+@media(max-width:1024px){
+    .stats-bar { grid-template-columns: repeat(2,1fr); gap: 20px; }
+    .stats-bar .stat-item + .stat-item::before { display: none; }
+    .stats-bar .stat-item { border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+}
+@media(max-width:768px){
+    .hero-cta-row { flex-direction: column; }
+    .btn-primary, .btn-secondary { justify-content: center; }
+    .stats-bar { grid-template-columns: 1fr 1fr; padding: 24px; }
+    .float-card { display: none; }
+    .lang-grid { grid-template-columns: repeat(2,1fr); }
+    .tips-grid { grid-template-columns: 1fr; }
+    .counter-grid { grid-template-columns: 1fr 1fr; }
+    .tools-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── Counting animation ───────────────────────────────────── */
+@keyframes countUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║                  HERO                         ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="hero">
+    <div class="hero-grid"></div>
+    <div class="container" style="position:relative;z-index:2;width:100%;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;">
+            <div>
+
+                <h1>Learn Skills That <span class="highlight">Actually Matter</span></h1>
+                <p>Master in-demand skills with expert-led courses in programming, data science, design, and business. Join 50,000+ learners transforming their careers.</p>
+                <div style="display:flex;gap:14px;flex-wrap:wrap;" class="hero-cta-row">
+                    <a href="{% url 'course_list' %}" class="btn-primary">
+                        <i class="fas fa-th-large" style="font-size:13px;"></i> Explore Courses
+                    </a>
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'register' %}" class="btn-secondary">
+                        Get Started Free <i class="fas fa-arrow-right" style="font-size:12px;"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="hero-stats">
+                    <div class="avatar-stack">
+                        <img src="https://i.pravatar.cc/100?img=1" alt="">
+                        <img src="https://i.pravatar.cc/100?img=2" alt="">
+                        <img src="https://i.pravatar.cc/100?img=3" alt="">
+                        <img src="https://i.pravatar.cc/100?img=4" alt="">
+                    </div>
+                    <div>
+                        <div class="hero-stat-num">50,000+</div>
+                        <div class="hero-stat-label">Happy students worldwide</div>
+                    </div>
+                    <div style="width:1px;height:36px;background:rgba(255,255,255,.08);"></div>
+                    <div>
+                        <div class="hero-stat-num" style="color:#F59E0B;">4.9 ★</div>
+                        <div class="hero-stat-label">Average rating</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual" style="display:none;" id="heroVisualDesktop">
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=640&h=520&fit=crop" alt="Students learning" class="hero-img">
+                <div class="float-card float-card-1">
+                    <div class="icon" style="background:rgba(5,150,105,.15);">
+                        <i class="fas fa-certificate" style="color:#34D399;font-size:16px;"></i>
+                    </div>
+                    <div><div class="value">Certificate Earned</div><div class="label">Web Development</div></div>
+                </div>
+                <div class="float-card float-card-2">
+                    <div class="icon" style="background:rgba(245,158,11,.15);">
+                        <i class="fas fa-star" style="color:#F59E0B;font-size:15px;"></i>
+                    </div>
+                    <div><div class="value">4.9 / 5.0 Rating</div><div class="label">12,400+ reviews</div></div>
+                </div>
+                <div class="float-card float-card-3">
+                    <div class="icon" style="background:rgba(37,99,235,.15);">
+                        <i class="fas fa-users" style="color:#60A5FA;font-size:15px;"></i>
+                    </div>
+                    <div><div class="value">Active Now</div><div class="label">2,340 students</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║                STATS BAR                      ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section style="background:var(--surface);padding-bottom:56px;">
+    <div class="container">
+        <div class="stats-bar reveal">
+            <div class="stat-item"><div class="num">50K+</div><div class="lbl">Active Students</div></div>
+            <div class="stat-item"><div class="num">100+</div><div class="lbl">Expert Instructors</div></div>
+            <div class="stat-item"><div class="num">500+</div><div class="lbl">Video Lessons</div></div>
+            <div class="stat-item"><div class="num">8+</div><div class="lbl">Categories</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║               LOGO TICKER                     ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="ticker-section">
+    <div class="ticker-label">Trusted by learners from leading companies</div>
+    <div class="ticker-track-wrap">
+        <div class="ticker-track">
+            <div class="ticker-item"><i class="fab fa-google"></i> Google</div>
+            <div class="ticker-item"><i class="fab fa-microsoft"></i> Microsoft</div>
+            <div class="ticker-item"><i class="fab fa-amazon"></i> Amazon</div>
+            <div class="ticker-item"><i class="fab fa-meta"></i> Meta</div>
+            <div class="ticker-item"><i class="fab fa-apple"></i> Apple</div>
+            <div class="ticker-item"><i class="fab fa-airbnb"></i> Airbnb</div>
+            <div class="ticker-item"><i class="fab fa-stripe"></i> Stripe</div>
+            <div class="ticker-item"><i class="fab fa-spotify"></i> Spotify</div>
+            <div class="ticker-item"><i class="fab fa-google"></i> Google</div>
+            <div class="ticker-item"><i class="fab fa-microsoft"></i> Microsoft</div>
+            <div class="ticker-item"><i class="fab fa-amazon"></i> Amazon</div>
+            <div class="ticker-item"><i class="fab fa-meta"></i> Meta</div>
+            <div class="ticker-item"><i class="fab fa-apple"></i> Apple</div>
+            <div class="ticker-item"><i class="fab fa-airbnb"></i> Airbnb</div>
+            <div class="ticker-item"><i class="fab fa-stripe"></i> Stripe</div>
+            <div class="ticker-item"><i class="fab fa-spotify"></i> Spotify</div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║              WHY CHOOSE US                    ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad" style="background:var(--white);">
+    <div class="container">
+        <div style="text-align:center;margin-bottom:56px;" class="reveal">
+            <span class="section-tag">Why LearnHub</span>
+            <h2 class="section-title">Everything You Need to Succeed</h2>
+            <p class="section-sub">We've built the best learning experience so you can focus on what matters — growing your skills.</p>
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card reveal reveal-delay-1">
+                <div class="feature-icon" style="background:var(--brand-light);"><i class="fas fa-play-circle" style="color:var(--brand);font-size:22px;"></i></div>
+                <h3>HD Video Lessons</h3>
+                <p>Crystal-clear video content with professional audio, code walkthroughs, and real-world projects from industry experts.</p>
+            </div>
+            <div class="feature-card reveal reveal-delay-2">
+                <div class="feature-icon" style="background:#F0FDF4;"><i class="fas fa-certificate" style="color:#059669;font-size:22px;"></i></div>
+                <h3>Verified Certificates</h3>
+                <p>Earn industry-recognized certificates upon completion. Share on LinkedIn and showcase your expertise to employers.</p>
+            </div>
+            <div class="feature-card reveal reveal-delay-3">
+                <div class="feature-icon" style="background:#FFFBEB;"><i class="fas fa-infinity" style="color:#D97706;font-size:22px;"></i></div>
+                <h3>Lifetime Access</h3>
+                <p>Buy once, learn forever. Access course updates, new content, and community discussions with no expiration date.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║               CATEGORIES                      ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad" style="background:var(--surface);">
+    <div class="container">
+        <div style="text-align:center;margin-bottom:48px;" class="reveal">
+            <span class="section-tag">Browse Topics</span>
+            <h2 class="section-title">Explore Categories</h2>
+            <p class="section-sub">Choose from a wide range of expertly curated topics to start your learning journey.</p>
+        </div>
+        <div class="cat-grid reveal">
+            {% for category in categories %}
+            <a href="{% url 'category_courses' category.slug %}" class="cat-card">
+                <div class="cat-icon" style="background:var(--brand-light);">
+                    <i class="fas {{ category.icon|default:'fa-code' }}" style="color:var(--brand);"></i>
+                </div>
+                <h3>{{ category.name }}</h3>
+                <p>{{ category.courses.count }} courses</p>
+            </a>
+            {% endfor %}
+        </div>
+        <div style="text-align:center;margin-top:36px;" class="reveal">
+            <a href="{% url 'course_list' %}" class="btn-primary" style="margin:0 auto;">
+                View All Categories <i class="fas fa-arrow-right" style="font-size:12px;"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║         PROGRAMMING LANGUAGES  ★ NEW          ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad lang-section">
+    <div class="container" style="position:relative;z-index:1;">
+        <div style="text-align:center;margin-bottom:48px;" class="reveal">
+            <span class="section-tag" style="background:rgba(37,99,235,.15);color:#60A5FA;">Start Coding</span>
+            <h2 class="section-title" style="color:#F8FAFC;margin-top:12px;">Top Programming Languages</h2>
+            <p style="font-size:16px;color:#64748B;max-width:520px;margin:12px auto 0;line-height:1.65;">Pick a language and dive straight in. Every path starts somewhere.</p>
+        </div>
+        <div class="lang-grid">
+            <div class="lang-card lang-python reveal reveal-delay-1">
+                <div class="lang-icon"><i class="fab fa-python"></i></div>
+                <h3>Python</h3>
+                <p>Data science, AI & automation</p>
+                <span class="lang-level"><i class="fas fa-signal" style="font-size:10px;"></i> Beginner Friendly</span>
+                <div class="courses-count">42 courses available</div>
+            </div>
+            <div class="lang-card lang-js reveal reveal-delay-2">
+                <div class="lang-icon"><i class="fab fa-js-square"></i></div>
+                <h3>JavaScript</h3>
+                <p>Web, mobile & backend</p>
+                <span class="lang-level"><i class="fas fa-signal" style="font-size:10px;"></i> All Levels</span>
+                <div class="courses-count">38 courses available</div>
+            </div>
+            <div class="lang-card lang-react reveal reveal-delay-3">
+                <div class="lang-icon"><i class="fab fa-react"></i></div>
+                <h3>React</h3>
+                <p>Modern frontend development</p>
+                <span class="lang-level"><i class="fas fa-signal" style="font-size:10px;"></i> Intermediate</span>
+                <div class="courses-count">29 courses available</div>
+            </div>
+            <div class="lang-card lang-java reveal reveal-delay-1">
+                <div class="lang-icon"><i class="fab fa-java"></i></div>
+                <h3>Java</h3>
+                <p>Enterprise & Android apps</p>
+                <span class="lang-level"><i class="fas fa-signal" style="font-size:10px;"></i> All Levels</span>
+                <div class="courses-count">24 courses available</div>
+            </div>
+            <div class="lang-card lang-cpp reveal reveal-delay-2">
+                <div class="lang-icon"><span style="font-weight:800;font-size:22px;font-family:monospace;">C++</span></div>
+                <h3>C / C++</h3>
+                <p>Systems, games & DSA</p>
+                <span class="lang-level"><i class="fas fa-signal" style="font-size:10px;"></i> Intermediate+</span>
+                <div class="courses-count">18 courses available</div>
+            </div>
+            <div class="lang-card lang-swift reveal reveal-delay-3">
+                <div class="lang-icon"><i class="fab fa-swift"></i></div>
+                <h3>Swift</h3>
+                <p>iOS & macOS development</p>
+                <span class="lang-level"><i class="fas fa-signal" style="font-size:10px;"></i> Intermediate</span>
+                <div class="courses-count">16 courses available</div>
+            </div>
+            <div class="lang-card lang-sql reveal reveal-delay-1">
+                <div class="lang-icon"><i class="fas fa-database"></i></div>
+                <h3>SQL</h3>
+                <p>Databases & data analytics</p>
+                <span class="lang-level"><i class="fas fa-signal" style="font-size:10px;"></i> Beginner Friendly</span>
+                <div class="courses-count">22 courses available</div>
+            </div>
+            <div class="lang-card lang-go reveal reveal-delay-2">
+                <div class="lang-icon"><span style="font-weight:800;font-size:18px;font-family:monospace;">Go</span></div>
+                <h3>Golang</h3>
+                <p>Cloud, APIs & microservices</p>
+                <span class="lang-level"><i class="fas fa-signal" style="font-size:10px;"></i> Intermediate</span>
+                <div class="courses-count">12 courses available</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║          FEATURED COURSES CAROUSEL            ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad" style="background:var(--white);">
+    <div class="container">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;flex-wrap:wrap;gap:16px;" class="reveal">
+            <div>
+                <span class="section-tag">Handpicked for you</span>
+                <h2 class="section-title" style="margin-top:8px;">Featured Courses</h2>
+                <p style="font-size:15px;color:var(--muted);margin-top:6px;">Curated by our experts to accelerate your career</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div id="progress-pills" class="progress-dots"></div>
+                <button class="carousel-nav" onclick="slideCarousel(-1)" id="btn-prev"><i class="fas fa-chevron-left"></i></button>
+                <button class="carousel-nav" onclick="slideCarousel(1)"  id="btn-next"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+        <div class="filter-wrap reveal">
+            <button class="filter-pill active" onclick="filterCourses('All', this)">All</button>
+            {% for category in categories %}
+            <button class="filter-pill" onclick="filterCourses('{{ category.name }}', this)">{{ category.name }}</button>
+            {% endfor %}
+        </div>
+        <div class="carousel-outer" id="carousel-outer">
+            <div class="carousel-track" id="courseCarousel">
+                {% for course in featured_courses %}
+                <div class="course-slide" data-category="{{ course.category.name|default:'General' }}">
+                    <div class="course-card-wrap">
+                        <div class="course-thumb">
+                            {% if course.thumbnail %}
+                                <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}">
+                            {% else %}
+                                <i class="fas fa-laptop-code no-img"></i>
+                            {% endif %}
+                            {% if course.is_bestseller %}
+                                <span class="course-badge badge-bestseller">Bestseller</span>
+                            {% elif course.discount_price %}
+                                <span class="course-badge badge-sale">Sale</span>
+                            {% endif %}
+                            {% if user.is_authenticated %}
+                            <button class="wishlist" data-course-id="{{ course.id }}" onclick="toggleWishlist(this.dataset.courseId, this)"><i class="far fa-heart"></i></button>
+                            {% endif %}
+                            <div class="course-duration">
+                                <i class="fas fa-clock" style="font-size:10px;"></i>
+                                {{ course.get_total_duration|default:"—" }}
+                            </div>
+                        </div>
+                        <div class="course-body">
+                            <p class="course-meta">{{ course.category.name }} &middot; {{ course.get_level_display }}</p>
+                            <h3 class="course-title">{{ course.title }}</h3>
+                            <p class="course-instructor">by {{ course.instructor.get_full_name|default:course.instructor.username }}</p>
+                            <div class="stars">
+                                <span class="rating-num">{{ course.get_average_rating|floatformat:1|default:"5.0" }}</span>
+                                <span class="star-icons">
+                                    {% for i in "12345" %}
+                                        <i class="fas fa-star{% if forloop.counter > course.get_average_rating|default:5 %}-o{% endif %}"></i>
+                                    {% endfor %}
+                                </span>
+                                <span class="review-count">({{ course.get_review_count|default:0 }})</span>
+                            </div>
+                            <p class="course-students">
+                                <i class="fas fa-user-graduate"></i>
+                                {{ course.enrolled_count|default:0|intcomma }} students enrolled
+                            </p>
+                            <div class="course-footer">
+                                <div>
+                                    {% if course.discount_price %}
+                                        <span class="price-now">${{ course.discount_price }}</span>
+                                        <span class="price-was">${{ course.price }}</span>
+                                    {% elif course.price == 0 %}
+                                        <span class="price-free">Free</span>
+                                    {% else %}
+                                        <span class="price-now">${{ course.price }}</span>
+                                    {% endif %}
+                                </div>
+                                <a href="{% url 'course_detail' course.slug %}" class="enroll-btn">
+                                    Enroll <i class="fas fa-arrow-right" style="font-size:11px;"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div style="text-align:center;margin-top:40px;" class="reveal">
+            <a href="{% url 'course_list' %}" class="btn-primary" style="margin:0 auto;">
+                Browse All Courses <i class="fas fa-arrow-right" style="font-size:12px;"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║        LEARNING ROADMAPS  ★ NEW               ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad roadmap-section">
+    <div class="container">
+        <div style="text-align:center;margin-bottom:40px;" class="reveal">
+            <span class="section-tag">Structured Paths</span>
+            <h2 class="section-title">Learning Roadmaps</h2>
+            <p class="section-sub">Follow step-by-step career paths designed by industry professionals. Know exactly what to learn and when.</p>
+        </div>
+
+        <div class="roadmap-tabs reveal" id="roadmapTabs">
+            <button class="rtab active" onclick="switchRoadmap('frontend', this)"><i class="fas fa-desktop"></i> Frontend</button>
+            <button class="rtab" onclick="switchRoadmap('backend', this)"><i class="fas fa-server"></i> Backend</button>
+            <button class="rtab" onclick="switchRoadmap('datascience', this)"><i class="fas fa-chart-bar"></i> Data Science</button>
+            <button class="rtab" onclick="switchRoadmap('devops', this)"><i class="fas fa-cloud"></i> DevOps</button>
+        </div>
+
+        <!-- Frontend Roadmap -->
+        <div class="roadmap-content active reveal" id="roadmap-frontend">
+            <div class="roadmap-grid">
+                <div class="roadmap-steps">
+                    <div class="roadmap-step done">
+                        <div class="step-num"><i class="fas fa-check" style="font-size:14px;"></i></div>
+                        <div class="step-info">
+                            <h4>HTML & CSS Fundamentals</h4>
+                            <p>Build the skeleton of the web. Learn semantic HTML, CSS box model, flexbox, and grid layouts.</p>
+                            <div class="step-tags"><span class="step-tag">HTML5</span><span class="step-tag">CSS3</span><span class="step-tag">Flexbox</span><span class="step-tag">Grid</span></div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step current">
+                        <div class="step-num">2</div>
+                        <div class="step-info">
+                            <h4>JavaScript Essentials</h4>
+                            <p>Master the language of the web. Variables, functions, DOM manipulation, and modern ES6+ syntax.</p>
+                            <div class="step-tags"><span class="step-tag">ES6+</span><span class="step-tag">DOM</span><span class="step-tag">Async/Await</span></div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step">
+                        <div class="step-num">3</div>
+                        <div class="step-info">
+                            <h4>React & State Management</h4>
+                            <p>Build dynamic UIs with components, hooks, React Router, and Redux for state management.</p>
+                            <div class="step-tags"><span class="step-tag">React</span><span class="step-tag">Hooks</span><span class="step-tag">Redux</span></div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step">
+                        <div class="step-num">4</div>
+                        <div class="step-info">
+                            <h4>Build & Deploy Real Projects</h4>
+                            <p>Work with Git, Webpack, and deploy to Vercel or Netlify. Build a portfolio that gets you hired.</p>
+                            <div class="step-tags"><span class="step-tag">Git</span><span class="step-tag">Webpack</span><span class="step-tag">Vercel</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="roadmap-visual">
+                    <h4>Frontend Developer Path</h4>
+                    <p>Estimated time: 6–8 months · 12 courses</p>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>HTML / CSS</span><span>90%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#3B82F6;--target-width:90%"></div></div>
+                    </div>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>JavaScript</span><span>80%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#F59E0B;--target-width:80%"></div></div>
+                    </div>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>React</span><span>70%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#8B5CF6;--target-width:70%"></div></div>
+                    </div>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>Dev Tools & Deployment</span><span>60%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#10B981;--target-width:60%"></div></div>
+                    </div>
+                    <div class="outcome-badges">
+                        <span class="outcome-badge"><i class="fas fa-check-circle"></i> Job-ready portfolio</span>
+                        <span class="outcome-badge"><i class="fas fa-check-circle"></i> $75K–$130K salary</span>
+                        <span class="outcome-badge"><i class="fas fa-check-circle"></i> Certificate included</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backend Roadmap -->
+        <div class="roadmap-content" id="roadmap-backend">
+            <div class="roadmap-grid">
+                <div class="roadmap-steps">
+                    <div class="roadmap-step done">
+                        <div class="step-num"><i class="fas fa-check" style="font-size:14px;"></i></div>
+                        <div class="step-info">
+                            <h4>Python or Node.js Basics</h4>
+                            <p>Choose your language. Learn syntax, data types, functions, and OOP fundamentals.</p>
+                            <div class="step-tags"><span class="step-tag">Python</span><span class="step-tag">Node.js</span><span class="step-tag">OOP</span></div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step current">
+                        <div class="step-num">2</div>
+                        <div class="step-info">
+                            <h4>Databases & SQL</h4>
+                            <p>Relational databases with PostgreSQL, NoSQL with MongoDB, and ORM tools like SQLAlchemy.</p>
+                            <div class="step-tags"><span class="step-tag">PostgreSQL</span><span class="step-tag">MongoDB</span><span class="step-tag">Redis</span></div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step">
+                        <div class="step-num">3</div>
+                        <div class="step-info">
+                            <h4>REST APIs & Authentication</h4>
+                            <p>Build production-grade APIs with Express or FastAPI. Implement JWT, OAuth, and security best practices.</p>
+                            <div class="step-tags"><span class="step-tag">REST</span><span class="step-tag">JWT</span><span class="step-tag">FastAPI</span></div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step">
+                        <div class="step-num">4</div>
+                        <div class="step-info">
+                            <h4>Cloud & System Design</h4>
+                            <p>Deploy to AWS or GCP, understand microservices, Docker, and scalable architecture patterns.</p>
+                            <div class="step-tags"><span class="step-tag">AWS</span><span class="step-tag">Docker</span><span class="step-tag">Microservices</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="roadmap-visual">
+                    <h4>Backend Developer Path</h4>
+                    <p>Estimated time: 7–9 months · 14 courses</p>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>Python / Node.js</span><span>85%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#3B82F6;--target-width:85%"></div></div>
+                    </div>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>Databases</span><span>80%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#F59E0B;--target-width:80%"></div></div>
+                    </div>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>APIs & Auth</span><span>75%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#8B5CF6;--target-width:75%"></div></div>
+                    </div>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>Cloud & DevOps</span><span>55%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#10B981;--target-width:55%"></div></div>
+                    </div>
+                    <div class="outcome-badges">
+                        <span class="outcome-badge"><i class="fas fa-check-circle"></i> API portfolio</span>
+                        <span class="outcome-badge"><i class="fas fa-check-circle"></i> $80K–$145K salary</span>
+                        <span class="outcome-badge"><i class="fas fa-check-circle"></i> Certificate included</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Science Roadmap -->
+        <div class="roadmap-content" id="roadmap-datascience">
+            <div class="roadmap-grid">
+                <div class="roadmap-steps">
+                    <div class="roadmap-step done">
+                        <div class="step-num"><i class="fas fa-check" style="font-size:14px;"></i></div>
+                        <div class="step-info">
+                            <h4>Python for Data Science</h4>
+                            <p>NumPy, Pandas, and Matplotlib. Data cleaning, transformation, and basic exploratory analysis.</p>
+                            <div class="step-tags"><span class="step-tag">NumPy</span><span class="step-tag">Pandas</span><span class="step-tag">Matplotlib</span></div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step current">
+                        <div class="step-num">2</div>
+                        <div class="step-info">
+                            <h4>Statistics & Probability</h4>
+                            <p>Hypothesis testing, distributions, regression analysis, and Bayesian thinking fundamentals.</p>
+                            <div class="step-tags"><span class="step-tag">Statistics</span><span class="step-tag">Regression</span><span class="step-tag">A/B Testing</span></div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step">
+                        <div class="step-num">3</div>
+                        <div class="step-info">
+                            <h4>Machine Learning</h4>
+                            <p>Supervised & unsupervised learning with scikit-learn. Classification, clustering, and model evaluation.</p>
+                            <div class="step-tags"><span class="step-tag">scikit-learn</span><span class="step-tag">ML Models</span><span class="step-tag">Feature Eng.</span></div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step">
+                        <div class="step-num">4</div>
+                        <div class="step-info">
+                            <h4>Deep Learning & AI</h4>
+                            <p>Neural networks with TensorFlow & PyTorch. NLP, computer vision, and deploying models to production.</p>
+                            <div class="step-tags"><span class="step-tag">TensorFlow</span><span class="step-tag">PyTorch</span><span class="step-tag">NLP</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="roadmap-visual">
+                    <h4>Data Scientist Path</h4>
+                    <p>Estimated time: 9–12 months · 16 courses</p>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>Python & Data Tools</span><span>90%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#3B82F6;--target-width:90%"></div></div>
+                    </div>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>Statistics</span><span>75%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#F59E0B;--target-width:75%"></div></div>
+                    </div>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>Machine Learning</span><span>70%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#8B5CF6;--target-width:70%"></div></div>
+                    </div>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>Deep Learning & AI</span><span>50%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#10B981;--target-width:50%"></div></div>
+                    </div>
+                    <div class="outcome-badges">
+                        <span class="outcome-badge"><i class="fas fa-check-circle"></i> DS portfolio</span>
+                        <span class="outcome-badge"><i class="fas fa-check-circle"></i> $90K–$160K salary</span>
+                        <span class="outcome-badge"><i class="fas fa-check-circle"></i> Certificate included</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DevOps Roadmap -->
+        <div class="roadmap-content" id="roadmap-devops">
+            <div class="roadmap-grid">
+                <div class="roadmap-steps">
+                    <div class="roadmap-step done">
+                        <div class="step-num"><i class="fas fa-check" style="font-size:14px;"></i></div>
+                        <div class="step-info">
+                            <h4>Linux & Shell Scripting</h4>
+                            <p>Master the terminal, Bash scripting, file systems, permissions, and process management.</p>
+                            <div class="step-tags"><span class="step-tag">Linux</span><span class="step-tag">Bash</span><span class="step-tag">Networking</span></div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step current">
+                        <div class="step-num">2</div>
+                        <div class="step-info">
+                            <h4>Docker & Containers</h4>
+                            <p>Containerize applications, manage images, Docker Compose, and container networking patterns.</p>
+                            <div class="step-tags"><span class="step-tag">Docker</span><span class="step-tag">Compose</span><span class="step-tag">Registries</span></div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step">
+                        <div class="step-num">3</div>
+                        <div class="step-info">
+                            <h4>Kubernetes & Orchestration</h4>
+                            <p>Deploy at scale with Kubernetes. Pods, deployments, services, Helm charts, and cluster management.</p>
+                            <div class="step-tags"><span class="step-tag">K8s</span><span class="step-tag">Helm</span><span class="step-tag">Ingress</span></div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step">
+                        <div class="step-num">4</div>
+                        <div class="step-info">
+                            <h4>CI/CD & Cloud Infrastructure</h4>
+                            <p>GitHub Actions, Jenkins pipelines, Terraform for IaC, monitoring with Prometheus and Grafana.</p>
+                            <div class="step-tags"><span class="step-tag">CI/CD</span><span class="step-tag">Terraform</span><span class="step-tag">Prometheus</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="roadmap-visual">
+                    <h4>DevOps Engineer Path</h4>
+                    <p>Estimated time: 8–11 months · 13 courses</p>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>Linux & Scripting</span><span>85%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#3B82F6;--target-width:85%"></div></div>
+                    </div>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>Docker & Containers</span><span>80%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#F59E0B;--target-width:80%"></div></div>
+                    </div>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>Kubernetes</span><span>65%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#8B5CF6;--target-width:65%"></div></div>
+                    </div>
+                    <div class="skill-bar-wrap">
+                        <div class="skill-bar-label"><span>CI/CD & IaC</span><span>60%</span></div>
+                        <div class="skill-bar-bg"><div class="skill-bar-fill" style="background:#10B981;--target-width:60%"></div></div>
+                    </div>
+                    <div class="outcome-badges">
+                        <span class="outcome-badge"><i class="fas fa-check-circle"></i> DevOps portfolio</span>
+                        <span class="outcome-badge"><i class="fas fa-check-circle"></i> $95K–$170K salary</span>
+                        <span class="outcome-badge"><i class="fas fa-check-circle"></i> Certificate included</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║         TRENDING TOPICS  ★ NEW                ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad trending-section">
+    <div class="container">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;flex-wrap:wrap;gap:16px;" class="reveal">
+            <div>
+                <span class="section-tag">What's Hot</span>
+                <h2 class="section-title" style="margin-top:8px;">Trending Topics in 2025</h2>
+                <p style="font-size:15px;color:var(--muted);margin-top:6px;">Skills employers are actively hiring for right now</p>
+            </div>
+            <a href="{% url 'course_list' %}" class="btn-primary" style="margin:0;">
+                See All <i class="fas fa-arrow-right" style="font-size:12px;"></i>
+            </a>
+        </div>
+        <div class="trending-scroll reveal">
+            <a href="{% url 'course_list' %}" class="trend-chip">
+                <i class="fas fa-robot" style="color:#8B5CF6;"></i>
+                <span>Generative AI</span>
+                <small>142 courses</small>
+                <span class="trend-up">↑ Hot</span>
+            </a>
+            <a href="{% url 'course_list' %}" class="trend-chip">
+                <i class="fas fa-brain" style="color:#EC4899;"></i>
+                <span>Machine Learning</span>
+                <small>89 courses</small>
+                <span class="trend-up">↑ Hot</span>
+            </a>
+            <a href="{% url 'course_list' %}" class="trend-chip">
+                <i class="fab fa-react" style="color:#61DAFB;"></i>
+                <span>React / Next.js</span>
+                <small>76 courses</small>
+            </a>
+            <a href="{% url 'course_list' %}" class="trend-chip">
+                <i class="fas fa-cloud" style="color:#3B82F6;"></i>
+                <span>Cloud Computing</span>
+                <small>64 courses</small>
+                <span class="trend-up">↑ Growing</span>
+            </a>
+            <a href="{% url 'course_list' %}" class="trend-chip">
+                <i class="fas fa-shield-alt" style="color:#EF4444;"></i>
+                <span>Cybersecurity</span>
+                <small>58 courses</small>
+                <span class="trend-up">↑ Hot</span>
+            </a>
+            <a href="{% url 'course_list' %}" class="trend-chip">
+                <i class="fas fa-cubes" style="color:#F59E0B;"></i>
+                <span>Blockchain & Web3</span>
+                <small>34 courses</small>
+            </a>
+            <a href="{% url 'course_list' %}" class="trend-chip">
+                <i class="fas fa-mobile-alt" style="color:#10B981;"></i>
+                <span>Flutter / Dart</span>
+                <small>42 courses</small>
+                <span class="trend-up">↑ Growing</span>
+            </a>
+            <a href="{% url 'course_list' %}" class="trend-chip">
+                <i class="fas fa-chart-line" style="color:#6366F1;"></i>
+                <span>Data Analytics</span>
+                <small>67 courses</small>
+            </a>
+            <a href="{% url 'course_list' %}" class="trend-chip">
+                <i class="fas fa-paint-brush" style="color:#EC4899;"></i>
+                <span>UI/UX Design</span>
+                <small>51 courses</small>
+            </a>
+            <a href="{% url 'course_list' %}" class="trend-chip">
+                <i class="fas fa-gamepad" style="color:#8B5CF6;"></i>
+                <span>Game Development</span>
+                <small>29 courses</small>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║         ACHIEVEMENT COUNTERS  ★ NEW           ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="counter-section">
+    <div class="container" style="position:relative;z-index:1;">
+        <div class="counter-grid">
+            <div class="counter-item reveal reveal-delay-1">
+                <span class="counter-icon"><i class="fas fa-user-graduate" style="color:#818CF8;font-size:28px;"></i></span>
+                <div class="counter-num" data-target="50000">0</div>
+                <div class="counter-lbl">Graduates this year</div>
+            </div>
+            <div class="counter-item reveal reveal-delay-2">
+                <span class="counter-icon"><i class="fas fa-star" style="color:#818CF8;font-size:28px;"></i></span>
+                <div class="counter-num" data-target="98">0</div>
+                <div class="counter-lbl">% satisfaction rate</div>
+            </div>
+            <div class="counter-item reveal reveal-delay-3">
+                <span class="counter-icon"><i class="fas fa-briefcase" style="color:#818CF8;font-size:28px;"></i></span>
+                <div class="counter-num" data-target="87">0</div>
+                <div class="counter-lbl">% got hired within 6 months</div>
+            </div>
+            <div class="counter-item reveal reveal-delay-4">
+                <span class="counter-icon"><i class="fas fa-globe" style="color:#818CF8;font-size:28px;"></i></span>
+                <div class="counter-num" data-target="150">0</div>
+                <div class="counter-lbl">Countries represented</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║         JOB OUTCOMES / SALARY  ★ NEW          ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad outcome-section">
+    <div class="container">
+        <div style="text-align:center;margin-bottom:56px;" class="reveal">
+            <span class="section-tag">Real Impact</span>
+            <h2 class="section-title">Where Our Learners End Up</h2>
+            <p class="section-sub">Thousands of LearnHub alumni are working at top companies and earning competitive salaries worldwide.</p>
+        </div>
+        <div class="outcome-grid">
+            <div class="reveal-left">
+                <div class="outcome-card">
+                    <div class="job-icon" style="background:#EFF6FF;color:#2563EB;"><i class="fas fa-code"></i></div>
+                    <div>
+                        <div class="job-title">Frontend Developer</div>
+                        <div class="job-range">React · Vue · Angular</div>
+                    </div>
+                    <div class="job-salary">
+                        <div class="salary-num">$95K</div>
+                        <div class="salary-period">avg. salary</div>
+                        <div class="salary-tag">↑ 22% YoY</div>
+                    </div>
+                </div>
+                <div class="outcome-card">
+                    <div class="job-icon" style="background:#F0FDF4;color:#059669;"><i class="fas fa-server"></i></div>
+                    <div>
+                        <div class="job-title">Backend Engineer</div>
+                        <div class="job-range">Python · Node · Java</div>
+                    </div>
+                    <div class="job-salary">
+                        <div class="salary-num">$115K</div>
+                        <div class="salary-period">avg. salary</div>
+                        <div class="salary-tag">↑ 18% YoY</div>
+                    </div>
+                </div>
+                <div class="outcome-card">
+                    <div class="job-icon" style="background:#FFF7ED;color:#D97706;"><i class="fas fa-chart-bar"></i></div>
+                    <div>
+                        <div class="job-title">Data Scientist</div>
+                        <div class="job-range">Python · R · TensorFlow</div>
+                    </div>
+                    <div class="job-salary">
+                        <div class="salary-num">$125K</div>
+                        <div class="salary-period">avg. salary</div>
+                        <div class="salary-tag">↑ 31% YoY</div>
+                    </div>
+                </div>
+                <div class="outcome-card">
+                    <div class="job-icon" style="background:#F5F3FF;color:#7C3AED;"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <div>
+                        <div class="job-title">DevOps Engineer</div>
+                        <div class="job-range">AWS · Docker · K8s</div>
+                    </div>
+                    <div class="job-salary">
+                        <div class="salary-num">$130K</div>
+                        <div class="salary-period">avg. salary</div>
+                        <div class="salary-tag">↑ 27% YoY</div>
+                    </div>
+                </div>
+            </div>
+            <div class="reveal-right">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:36px;">
+                    <div style="font-size:48px;margin-bottom:16px;"><i class="fas fa-trophy" style="color:#D97706;font-size:40px;"></i></div>
+                    <h3 style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--ink);margin-bottom:12px;line-height:1.2;">87% of our graduates land a job within 6 months</h3>
+                    <p style="font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:28px;">Our structured learning paths, mentor sessions, and career services are designed to get you hired — not just educated.</p>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;">
+                        <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;text-align:center;">
+                            <div style="font-family:var(--font-display);font-size:26px;font-weight:800;color:var(--brand);">4.2x</div>
+                            <div style="font-size:12px;color:var(--muted);margin-top:4px;">Avg. salary increase</div>
+                        </div>
+                        <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;text-align:center;">
+                            <div style="font-family:var(--font-display);font-size:26px;font-weight:800;color:var(--success);">92%</div>
+                            <div style="font-size:12px;color:var(--muted);margin-top:4px;">Completion rate</div>
+                        </div>
+                    </div>
+                    <a href="{% url 'course_list' %}" class="btn-primary" style="width:100%;justify-content:center;">
+                        Start Your Career Path <i class="fas fa-arrow-right" style="font-size:12px;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║          STUDENT TIPS  ★ NEW                  ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad tips-section">
+    <div class="container">
+        <div style="text-align:center;margin-bottom:56px;" class="reveal">
+            <span class="section-tag">Pro Tips</span>
+            <h2 class="section-title">Tips for Successful Learning</h2>
+            <p class="section-sub">Evidence-based strategies from learning scientists and top instructors to help you retain more and progress faster.</p>
+        </div>
+        <div class="tips-grid">
+            <div class="tip-card tip-blue reveal reveal-delay-1">
+                <div class="tip-number">01</div>
+                <div class="tip-icon"><i class="fas fa-clock"></i></div>
+                <h3>Learn in Focused Sprints</h3>
+                <p>Use the Pomodoro technique — 25 minutes of deep focus followed by a 5-minute break. Consistent short sessions beat occasional long marathons every time.</p>
+            </div>
+            <div class="tip-card tip-green reveal reveal-delay-2">
+                <div class="tip-number">02</div>
+                <div class="tip-icon"><i class="fas fa-code"></i></div>
+                <h3>Build While You Learn</h3>
+                <p>Don't just watch videos — pause after every concept and write the code yourself. Building real mini-projects cements knowledge better than any note-taking.</p>
+            </div>
+            <div class="tip-card tip-amber reveal reveal-delay-3">
+                <div class="tip-number">03</div>
+                <div class="tip-icon"><i class="fas fa-redo"></i></div>
+                <h3>Review with Spaced Repetition</h3>
+                <p>Revisit material at increasing intervals — after 1 day, then 3 days, then a week. This fights the forgetting curve and locks concepts into long-term memory.</p>
+            </div>
+            <div class="tip-card tip-purple reveal reveal-delay-1">
+                <div class="tip-number">04</div>
+                <div class="tip-icon"><i class="fas fa-comments"></i></div>
+                <h3>Teach What You Learn</h3>
+                <p>The Feynman Technique: explain concepts in simple language as if teaching someone else. Gaps in your understanding immediately surface when you try to explain.</p>
+            </div>
+            <div class="tip-card tip-red reveal reveal-delay-2">
+                <div class="tip-number">05</div>
+                <div class="tip-icon"><i class="fas fa-bullseye"></i></div>
+                <h3>Set a Specific Goal First</h3>
+                <p>Don't just "learn Python." Say "I will build a web scraper in 30 days." Clear, measurable goals create motivation and a natural learning roadmap.</p>
+            </div>
+            <div class="tip-card tip-teal reveal reveal-delay-3">
+                <div class="tip-number">06</div>
+                <div class="tip-icon"><i class="fas fa-users"></i></div>
+                <h3>Join a Learning Community</h3>
+                <p>Accountable learners progress 2x faster. Join study groups, Discord servers, or pair up with a peer. Isolation is the #1 reason people quit online courses.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║         TOOLS & RESOURCES  ★ NEW              ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad tools-section">
+    <div class="container">
+        <div style="text-align:center;margin-bottom:48px;" class="reveal">
+            <span class="section-tag">Developer Toolkit</span>
+            <h2 class="section-title">Free Tools & Resources</h2>
+            <p class="section-sub">Handpicked tools our students use every day to code faster, learn smarter, and build better.</p>
+        </div>
+        <div class="tools-grid">
+            <div class="tool-card reveal reveal-delay-1">
+                <span class="tool-badge badge-free">Free</span>
+                <div class="tool-icon" style="background:#FFF7ED;color:#D97706;"><i class="fas fa-terminal"></i></div>
+                <h3>VS Code</h3>
+                <p>The most popular code editor. Lightweight, powerful, and packed with extensions for every language.</p>
+            </div>
+            <div class="tool-card reveal reveal-delay-2">
+                <span class="tool-badge badge-free">Free</span>
+                <div class="tool-icon" style="background:#F0FDF4;color:#059669;"><i class="fab fa-github"></i></div>
+                <h3>GitHub</h3>
+                <p>Version control and collaboration. Build your public portfolio and showcase your projects to employers.</p>
+            </div>
+            <div class="tool-card reveal reveal-delay-3">
+                <span class="tool-badge badge-pro">Pro</span>
+                <div class="tool-icon" style="background:#F5F3FF;color:#7C3AED;"><i class="fas fa-sitemap"></i></div>
+                <h3>Figma</h3>
+                <p>Design interfaces and prototypes with the tool used by every major product design team worldwide.</p>
+            </div>
+            <div class="tool-card reveal reveal-delay-4">
+                <span class="tool-badge badge-free">Free</span>
+                <div class="tool-icon" style="background:#EFF6FF;color:#2563EB;"><i class="fas fa-database"></i></div>
+                <h3>PostgreSQL</h3>
+                <p>The world's most advanced open-source relational database. Power your backend applications with ease.</p>
+            </div>
+            <div class="tool-card reveal reveal-delay-1">
+                <span class="tool-badge badge-free">Free</span>
+                <div class="tool-icon" style="background:#FFF1F2;color:#E11D48;"><i class="fab fa-docker"></i></div>
+                <h3>Docker</h3>
+                <p>Containerize and ship applications consistently across any environment. A must-have DevOps skill.</p>
+            </div>
+            <div class="tool-card reveal reveal-delay-2">
+                <span class="tool-badge badge-free">Free</span>
+                <div class="tool-icon" style="background:#FFFBEB;color:#D97706;"><i class="fas fa-fire"></i></div>
+                <h3>Postman</h3>
+                <p>Test and document your APIs. Every backend developer needs this in their daily workflow.</p>
+            </div>
+            <div class="tool-card reveal reveal-delay-3">
+                <span class="tool-badge badge-pro">Pro</span>
+                <div class="tool-icon" style="background:#F0FDF4;color:#059669;"><i class="fas fa-chart-bar"></i></div>
+                <h3>Jupyter</h3>
+                <p>Interactive notebooks for Python data science and machine learning. Visualize data and iterate fast.</p>
+            </div>
+            <div class="tool-card reveal reveal-delay-4">
+                <span class="tool-badge badge-free">Free</span>
+                <div class="tool-icon" style="background:#EFF6FF;color:#2563EB;"><i class="fas fa-bolt"></i></div>
+                <h3>Vercel</h3>
+                <p>Deploy frontend projects in seconds with zero configuration. The fastest way to show off your work.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║              HOW IT WORKS                     ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad" style="background:var(--white);">
+    <div class="container">
+        <div style="text-align:center;margin-bottom:64px;" class="reveal">
+            <span class="section-tag">Simple Process</span>
+            <h2 class="section-title">Start Learning in 3 Steps</h2>
+            <p class="section-sub">From zero to certified — we've made the journey as smooth as possible.</p>
+        </div>
+        <div class="hiw-grid">
+            <div class="hiw-step reveal reveal-delay-1">
+                <div class="hiw-num" style="background:var(--brand-light);color:var(--brand);">1</div>
+                <h3>Browse Courses</h3>
+                <p>Explore 500+ courses across 8 categories. Filter by skill level, topic, or price to find your perfect match.</p>
+            </div>
+            <div class="hiw-step reveal reveal-delay-2">
+                <div class="hiw-num" style="background:#F0FDF4;color:#059669;">2</div>
+                <h3>Enroll & Learn</h3>
+                <p>Enroll in seconds and get instant access. Learn at your own pace with HD video lessons and hands-on projects.</p>
+            </div>
+            <div class="hiw-step reveal reveal-delay-3">
+                <div class="hiw-num" style="background:#FFFBEB;color:#D97706;">3</div>
+                <h3>Get Certified</h3>
+                <p>Complete your course and earn a verified certificate. Add it to your LinkedIn profile and get hired faster.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║               TESTIMONIALS                    ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad testimonial-section">
+    <div class="container" style="position:relative;z-index:1;">
+        <div style="text-align:center;margin-bottom:56px;" class="reveal">
+            <span class="section-tag" style="background:rgba(37,99,235,.15);color:#60A5FA;">Student Stories</span>
+            <h2 class="section-title" style="color:#F1F5F9;margin-top:12px;">What Our Learners Say</h2>
+            <p style="font-size:16px;color:#64748B;max-width:480px;margin:12px auto 0;line-height:1.65;">Real results from real people who transformed their careers on LearnHub.</p>
+        </div>
+        <div class="testimonial-grid">
+            <div class="tcard reveal reveal-delay-1">
+                <div class="quote">"</div>
+                <div class="stars-row"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>The web development course was incredible. I went from a complete beginner to building full-stack apps in just 3 months. Worth every penny.</p>
+                <div class="tcard-footer">
+                    <img src="https://i.pravatar.cc/100?img=11" alt="Alex Johnson">
+                    <div><div class="name">Alex Johnson</div><div class="role">Web Developer at Stripe</div></div>
+                </div>
+            </div>
+            <div class="tcard reveal reveal-delay-2">
+                <div class="quote">"</div>
+                <div class="stars-row"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>Best platform for learning data science. The instructors are brilliant, the curriculum is structured perfectly, and the projects are genuinely challenging.</p>
+                <div class="tcard-footer">
+                    <img src="https://i.pravatar.cc/100?img=12" alt="Sarah Williams">
+                    <div><div class="name">Sarah Williams</div><div class="role">Data Analyst at Google</div></div>
+                </div>
+            </div>
+            <div class="tcard reveal reveal-delay-3">
+                <div class="quote">"</div>
+                <div class="stars-row"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>The iOS development course helped me launch my first app on the App Store. Clear explanations, real-world focus, and an amazing community.</p>
+                <div class="tcard-footer">
+                    <img src="https://i.pravatar.cc/100?img=13" alt="Mike Chen">
+                    <div><div class="name">Mike Chen</div><div class="role">iOS Developer at Apple</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║           BECOME AN INSTRUCTOR                ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad instructor-section">
+    <div class="container" style="position:relative;z-index:1;">
+        <div style="text-align:center;margin-bottom:48px;" class="reveal">
+            <span class="section-tag" style="background:rgba(255,255,255,.07);color:#94A3B8;">For Experts</span>
+            <h2 class="section-title" style="color:#F8FAFC;margin-top:12px;">Become an Instructor</h2>
+            <p style="font-size:16px;color:#64748B;max-width:480px;margin:12px auto 0;line-height:1.65;">Share your knowledge with 50,000+ students and build a sustainable income doing what you love.</p>
+        </div>
+        <div class="instr-perks reveal">
+            <div class="perk-card"><i class="fas fa-dollar-sign" style="color:#34D399;"></i><h4>Earn 70% Revenue</h4><p>Keep the majority of every sale. No hidden fees or complicated payout structures.</p></div>
+            <div class="perk-card"><i class="fas fa-globe" style="color:#60A5FA;"></i><h4>Global Audience</h4><p>Reach learners in 150+ countries. Your course works for you 24/7 while you sleep.</p></div>
+            <div class="perk-card"><i class="fas fa-tools" style="color:#A78BFA;"></i><h4>Powerful Tools</h4><p>Our creation studio makes it easy to record, upload, and publish professional courses.</p></div>
+        </div>
+        <div style="text-align:center;" class="reveal">
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn-primary" style="margin:0 auto;font-size:15px;padding:15px 36px;">
+                    Start Teaching Today <i class="fas fa-arrow-right" style="font-size:12px;"></i>
+                </a>
+            {% else %}
+                <a href="{% url 'instructor_dashboard' %}" class="btn-primary" style="margin:0 auto;font-size:15px;padding:15px 36px;">
+                    Instructor Dashboard <i class="fas fa-arrow-right" style="font-size:12px;"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║                   FAQ                         ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad" style="background:var(--surface);">
+    <div class="container" style="max-width:720px;">
+        <div style="text-align:center;margin-bottom:48px;" class="reveal">
+            <span class="section-tag">FAQ</span>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-sub">Got questions? We have answers.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;" x-data="{selected:null}" class="reveal">
+            <div class="faq-item">
+                <button class="faq-btn" @click="selected !== 1 ? selected = 1 : selected = null">
+                    <span>How do I enroll in a course?</span>
+                    <i class="fas fa-chevron-down" :style="selected === 1 ? 'transform:rotate(180deg)' : ''"></i>
+                </button>
+                <div x-show="selected === 1" class="faq-body">Browse our courses, click any course you're interested in, and hit "Enroll" or "Buy Now". Free courses give instant access; paid courses unlock after checkout.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-btn" @click="selected !== 2 ? selected = 2 : selected = null">
+                    <span>Do I get a certificate after completing a course?</span>
+                    <i class="fas fa-chevron-down" :style="selected === 2 ? 'transform:rotate(180deg)' : ''"></i>
+                </button>
+                <div x-show="selected === 2" class="faq-body">Yes! Once you complete 100% of a course — all videos, quizzes, and assignments — you'll automatically receive a verified certificate of completion.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-btn" @click="selected !== 3 ? selected = 3 : selected = null">
+                    <span>Can I access courses on mobile?</span>
+                    <i class="fas fa-chevron-down" :style="selected === 3 ? 'transform:rotate(180deg)' : ''"></i>
+                </button>
+                <div x-show="selected === 3" class="faq-body">Absolutely. All courses are fully mobile-responsive. Access them from any phone, tablet, or desktop browser — your progress syncs across all devices.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-btn" @click="selected !== 4 ? selected = 4 : selected = null">
+                    <span>Is there a refund policy?</span>
+                    <i class="fas fa-chevron-down" :style="selected === 4 ? 'transform:rotate(180deg)' : ''"></i>
+                </button>
+                <div x-show="selected === 4" class="faq-body">Yes — we offer a full 30-day money-back guarantee, no questions asked. If you're not satisfied, just contact support within 30 days of purchase.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║               FINAL CTA                       ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<section class="section-pad final-cta">
+    <div class="container" style="text-align:center;position:relative;z-index:1;">
+        <div class="reveal">
+            <h2 style="font-family:var(--font-display);font-size:clamp(32px,4vw,52px);font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:16px;line-height:1.1;">Ready to Level Up Your Career?</h2>
+            <p style="font-size:18px;color:rgba(255,255,255,.75);margin-bottom:36px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.65;">Join 50,000+ students already learning on LearnHub. Start free today.</p>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn-white">
+                    Sign Up Free — No Credit Card <i class="fas fa-arrow-right" style="font-size:12px;"></i>
+                </a>
+            {% else %}
+                <a href="{% url 'course_list' %}" class="btn-white">
+                    Browse All Courses <i class="fas fa-arrow-right" style="font-size:12px;"></i>
+                </a>
+            {% endif %}
+            <p style="font-size:13px;color:rgba(255,255,255,.45);margin-top:20px;">
+                <i class="fas fa-lock" style="font-size:11px;margin-right:5px;"></i>30-day money-back guarantee · No spam, ever
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════╗ -->
+<!-- ║                  SCRIPTS                      ║ -->
+<!-- ╚═══════════════════════════════════════════════╝ -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    /* ── Scroll reveal ──────────────────────────────── */
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                // Trigger skill bar animations
+                e.target.querySelectorAll('.skill-bar-fill').forEach(bar => bar.classList.add('animated'));
+                // Trigger counters
+                const counters = e.target.querySelectorAll('[data-target]');
+                counters.forEach(animateCounter);
+            }
+        });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => io.observe(el));
+
+    // Also observe counter items directly
+    document.querySelectorAll('.counter-item').forEach(el => {
+        const bar = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.querySelectorAll('[data-target]').forEach(animateCounter);
+                    bar.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.3 });
+        bar.observe(el);
+    });
+
+    /* ── Counter animation ──────────────────────────── */
+    function animateCounter(el) {
+        const target = +el.dataset.target;
+        if (!target || el.dataset.animated) return;
+        el.dataset.animated = '1';
+        const suffix = target >= 10000 ? 'K+' : target >= 100 ? '%' : '+';
+        const displayTarget = target >= 10000 ? Math.round(target / 1000) : target;
+        let start = 0;
+        const duration = 1800;
+        const step = (timestamp) => {
+            if (!start) start = timestamp;
+            const progress = Math.min((timestamp - start) / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.floor(ease * displayTarget) + (progress >= 1 ? suffix : '');
+            if (progress < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+    }
+
+    /* ── Hero visual on large screens ──────────────── */
+    const heroVis = document.getElementById('heroVisualDesktop');
+    if (heroVis && window.innerWidth >= 1024) heroVis.style.display = 'block';
+
+    /* ── Roadmap tabs ───────────────────────────────── */
+    window.switchRoadmap = function(id, btn) {
+        document.querySelectorAll('.rtab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.roadmap-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        const content = document.getElementById('roadmap-' + id);
+        content.classList.add('active');
+        // Animate skill bars in new tab
+        content.querySelectorAll('.skill-bar-fill').forEach(bar => {
+            bar.classList.remove('animated');
+            setTimeout(() => bar.classList.add('animated'), 50);
+        });
+    };
+
+    /* ── Carousel logic ─────────────────────────────── */
+    let current = 0;
+    let visibleSlides = [];
+    const track    = document.getElementById('courseCarousel');
+    const outer    = document.getElementById('carousel-outer');
+    const allSlides = Array.from(document.querySelectorAll('.course-slide'));
+
+    function perView() {
+        const w = outer.offsetWidth;
+        return w < 640 ? 1 : w < 1024 ? 2 : 3;
+    }
+    function cardWidth() { return visibleSlides[0] ? visibleSlides[0].offsetWidth + 20 : 0; }
+    function renderDots() {
+        const wrap = document.getElementById('progress-pills');
+        wrap.innerHTML = '';
+        const total = Math.max(1, visibleSlides.length - perView() + 1);
+        for (let i = 0; i < total; i++) {
+            const d = document.createElement('div');
+            d.className = 'pdot' + (i === current ? ' active' : '');
+            d.style.width = i === current ? '22px' : '6px';
+            d.onclick = () => { current = i; applySlide(); };
+            wrap.appendChild(d);
+        }
+    }
+    function applySlide() {
+        const max = Math.max(0, visibleSlides.length - perView());
+        if (current > max) current = max;
+        track.style.transform = `translateX(-${current * cardWidth()}px)`;
+        renderDots();
+    }
+    window.slideCarousel = function(dir) {
+        const max = Math.max(0, visibleSlides.length - perView());
+        current = Math.max(0, Math.min(current + dir, max));
+        applySlide();
+    };
+    window.filterCourses = function(cat, btn) {
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        current = 0;
+        allSlides.forEach(s => { s.style.display = (cat === 'All' || s.dataset.category === cat) ? '' : 'none'; });
+        visibleSlides = allSlides.filter(s => s.style.display !== 'none');
+        applySlide();
+    };
+
+    /* Drag / swipe */
+    let sx = 0, dragging = false, dx = 0;
+    track.addEventListener('mousedown',  e => { dragging = true; sx = e.clientX; });
+    track.addEventListener('mousemove',  e => { if (dragging) dx = e.clientX - sx; });
+    track.addEventListener('mouseup',    ()  => { if (dragging && Math.abs(dx) > 48) slideCarousel(dx < 0 ? 1 : -1); dragging = false; dx = 0; });
+    track.addEventListener('mouseleave', ()  => { dragging = false; dx = 0; });
+    track.addEventListener('touchstart', e   => { sx = e.touches[0].clientX; });
+    track.addEventListener('touchend',   e   => { const d = e.changedTouches[0].clientX - sx; if (Math.abs(d) > 48) slideCarousel(d < 0 ? 1 : -1); });
+
+    setInterval(() => { if (document.visibilityState === 'visible') slideCarousel(1); }, 5500);
+    window.addEventListener('resize', applySlide);
+    visibleSlides = [...allSlides];
+    applySlide();
+
+    // Initial skill bar animation for active roadmap tab
+    setTimeout(() => {
+        document.querySelectorAll('.roadmap-content.active .skill-bar-fill').forEach(bar => bar.classList.add('animated'));
+    }, 600);
+});
+
+/* ── Wishlist toggle ──────────────────────────────── */
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+           document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1] || '';
+}
+
+window.toggleWishlist = function(courseId, btn) {
+    const icon = btn.querySelector('i');
+    fetch('/courses/api/wishlist/toggle/', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify({ course_id: courseId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.added) { icon.classList.replace('far','fas'); btn.style.color = '#DC2626'; }
+        else             { icon.classList.replace('fas','far'); btn.style.color = ''; }
+    })
+    .catch(err => console.error('Wishlist error:', err));
+};
+</script>
+
+{% endblock %}

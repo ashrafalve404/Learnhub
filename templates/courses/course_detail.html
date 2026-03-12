@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load course_extras %}
+
+{% block title %}{{ course.title }} - LearnHub{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+                {% if course.thumbnail %}
+                    <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="w-full h-80 object-cover rounded-lg">
+                {% else %}
+                    <div class="w-full h-80 bg-gray-200 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-image text-5xl text-gray-400"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="mt-8">
+                    <h1 class="text-3xl font-bold text-gray-800">{{ course.title }}</h1>
+                    <p class="text-gray-600 mt-2">{{ course.description }}</p>
+                    
+                    <div class="flex items-center mt-4 space-x-4">
+                        <div class="flex text-yellow-400">
+                            {% for i in "12345" %}
+                                <i class="fas fa-star{% if forloop.counter > course.get_average_rating %}-o{% endif %}"></i>
+                            {% endfor %}
+                        </div>
+                        <span class="text-gray-600">({{ course.get_review_count }} reviews)</span>
+                        <span class="text-gray-600">{{ course.get_enrolled_count }} students</span>
+                    </div>
+                    
+                    <div class="mt-4 flex items-center space-x-4">
+                        {% if course.instructor.avatar %}
+                            <img src="{{ course.instructor.avatar.url }}" class="w-10 h-10 rounded-full">
+                        {% else %}
+                            <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                <i class="fas fa-user text-gray-600"></i>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <p class="font-medium">{{ course.instructor.get_full_name|default:course.instructor.username }}</p>
+                            <p class="text-sm text-gray-500">Instructor</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h2 class="text-xl font-bold mb-4">What You'll Learn</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {% if course.outcomes %}
+                            {% for outcome in course.outcomes|splitlines %}
+                                {% if outcome.strip %}
+                                <div class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                    <span>{{ outcome.strip }}</span>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-gray-500">Learning outcomes to be announced.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h2 class="text-xl font-bold mb-4">Course Content</h2>
+                    <div class="space-y-4">
+                        {% for module in modules %}
+                            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                                <div class="bg-gray-100 px-4 py-3">
+                                    <h3 class="font-semibold">{{ module.title }}</h3>
+                                    <p class="text-sm text-gray-500">{{ module.lessons.count }} lessons</p>
+                                </div>
+                                <div class="divide-y">
+                                    {% for lesson in module.lessons.all %}
+                                        <div class="px-4 py-3 flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-play-circle text-gray-400 mr-3"></i>
+                                                <span>{{ lesson.title }}</span>
+                                                {% if lesson.is_preview %}
+                                                    <span class="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Preview</span>
+                                                {% endif %}
+                                            </div>
+                                            <span class="text-sm text-gray-500">{{ lesson.get_duration_display }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-gray-500">Course content coming soon.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h2 class="text-xl font-bold mb-4">Reviews</h2>
+                    {% for review in reviews %}
+                        <div class="bg-white rounded-lg p-4 mb-4 shadow-sm">
+                            <div class="flex items-center mb-2">
+                                {% if review.user.avatar %}
+                                    <img src="{{ review.user.avatar.url }}" class="w-10 h-10 rounded-full mr-3">
+                                {% else %}
+                                    <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center mr-3">
+                                        <i class="fas fa-user text-gray-600"></i>
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <p class="font-medium">{{ review.user.username }}</p>
+                                    <div class="flex text-yellow-400 text-sm">
+                                        {% for i in "12345" %}
+                                            <i class="fas fa-star{% if forloop.counter > review.rating %}-o{% endif %}"></i>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600">{{ review.comment }}</p>
+                        </div>
+                    {% empty %}
+                        <p class="text-gray-500">No reviews yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-lg p-6 sticky top-4">
+                    <div class="text-center mb-4">
+                        {% if course.discount_price %}
+                            <span class="text-3xl font-bold text-indigo-600">${{ course.discount_price }}</span>
+                            <span class="text-lg text-gray-500 line-through ml-2">${{ course.price }}</span>
+                        {% elif course.price == 0 %}
+                            <span class="text-3xl font-bold text-green-600">Free</span>
+                        {% else %}
+                            <span class="text-3xl font-bold text-indigo-600">${{ course.price }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if user.is_authenticated %}
+                        {% if course.price == 0 %}
+                            <a href="{% url 'enroll_in_course' course.id %}" class="block w-full bg-indigo-600 text-white text-center py-3 rounded-lg hover:bg-indigo-700 mb-3">Enroll Now (Free)</a>
+                        {% else %}
+                            <a href="{% url 'payment_checkout' course.id %}" class="block w-full bg-indigo-600 text-white text-center py-3 rounded-lg hover:bg-indigo-700 mb-3">Buy Now</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}?next={% url 'course_detail' course.slug %}" class="block w-full bg-indigo-600 text-white text-center py-3 rounded-lg hover:bg-indigo-700 mb-3">Login to Enroll</a>
+                    {% endif %}
+                    
+                    <div class="border-t pt-4 mt-4">
+                        <h3 class="font-semibold mb-3">This course includes:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li><i class="fas fa-video w-6"></i> {{ course.total_lessons }} video lessons</li>
+                            <li><i class="fas fa-clock w-6"></i> {{ course.total_duration }} minutes</li>
+                            <li><i class="fas fa-infinity w-6"></i> Lifetime access</li>
+                            <li><i class="fas fa-mobile-alt w-6"></i> Access on mobile</li>
+                            <li><i class="fas fa-certificate w-6"></i> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border-t pt-4 mt-4">
+                        <h3 class="font-semibold mb-2">Requirements</h3>
+                        <ul class="text-gray-600 text-sm">
+                            {% if course.requirements %}
+                                {% for req in course.requirements|splitlines %}
+                                    {% if req.strip %}
+                                    <li class="flex items-start">
+                                        <i class="fas fa-circle text-xs mt-1.5 mr-2"></i>
+                                        <span>{{ req.strip }}</span>
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <li class="flex items-start">
+                                    <i class="fas fa-circle text-xs mt-1.5 mr-2"></i>
+                                    <span>Basic computer skills</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if related_courses %}
+        <div class="mt-12">
+            <h2 class="text-2xl font-bold mb-6">Related Courses</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {% for related in related_courses %}
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        {% if related.thumbnail %}
+                            <img src="{{ related.thumbnail.url }}" class="w-full h-32 object-cover">
+                        {% else %}
+                            <div class="w-full h-32 bg-gray-200"></div>
+                        {% endif %}
+                        <div class="p-4">
+                            <h3 class="font-medium text-sm line-clamp-2">{{ related.title }}</h3>
+                            <a href="{% url 'course_detail' related.slug %}" class="text-indigo-600 text-sm">View Details</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

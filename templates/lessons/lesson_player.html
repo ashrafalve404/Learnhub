@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load course_extras %}
+
+{% block title %}{{ lesson.title }} - LearnHub{% endblock %}
+
+{% block content %}
+<div class="bg-gray-900 text-white min-h-screen">
+    <div class="flex flex-col lg:flex-row">
+        <div class="lg:w-3/4">
+            <div class="relative bg-black" style="padding-top: 56.25%;">
+                {% if lesson.video_id %}
+                    <iframe class="absolute inset-0 w-full h-full"
+                        src="https://www.youtube.com/embed/{{ lesson.video_id }}?enablejsapi=1"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                {% else %}
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <p class="text-gray-400">No video available</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h1 class="text-2xl font-bold">{{ lesson.title }}</h1>
+                    <button id="markCompleteBtn" 
+                            data-lesson-id="{{ lesson.id }}"
+                            class="px-4 py-2 rounded-lg {% if lesson.id in completed_lessons %}bg-green-600{% else %}bg-indigo-600{% endif %} hover:opacity-90 transition">
+                        {% if lesson.id in completed_lessons %}
+                            <i class="fas fa-check mr-2"></i> Completed
+                        {% else %}
+                            <i class="fas fa-check mr-2"></i> Mark as Complete
+                        {% endif %}
+                    </button>
+                </div>
+                
+                <div class="flex items-center justify-between text-gray-400">
+                    <div class="flex items-center space-x-4">
+                        {% if prev_lesson %}
+                            <a href="{% url 'lesson_player' course.slug prev_lesson.id %}" class="hover:text-white">
+                                <i class="fas fa-chevron-left mr-1"></i> Previous
+                            </a>
+                        {% endif %}
+                        {% if next_lesson %}
+                            <a href="{% url 'lesson_player' course.slug next_lesson.id %}" class="hover:text-white">
+                                Next <i class="fas fa-chevron-right ml-1"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-clock mr-2"></i>
+                        {{ lesson.get_duration_display }}
+                    </div>
+                </div>
+                
+                {% if lesson.description %}
+                <div class="mt-6 border-t border-gray-700 pt-6">
+                    <h2 class="text-lg font-semibold mb-2">About this lesson</h2>
+                    <p class="text-gray-400">{{ lesson.description }}</p>
+                </div>
+                {% endif %}
+                
+                {% if lesson.resources %}
+                <div class="mt-6 border-t border-gray-700 pt-6">
+                    <h2 class="text-lg font-semibold mb-3">Resources</h2>
+                    <ul class="space-y-2">
+                        {% for resource in lesson.resources|splitlines %}
+                            {% if resource.strip %}
+                            <li>
+                                <a href="{{ resource.strip }}" target="_blank" class="text-indigo-400 hover:text-indigo-300">
+                                    <i class="fas fa-link mr-2"></i>{{ resource.strip }}
+                                </a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="lg:w-1/4 bg-gray-800 h-screen overflow-y-auto">
+            <div class="p-4">
+                <h2 class="text-lg font-semibold mb-4">{{ course.title }}</h2>
+                
+                {% if enrollment %}
+                <div class="mb-4">
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ enrollment.progress_percentage }}%"></div>
+                    </div>
+                    <p class="text-sm text-gray-400 mt-1">{{ enrollment.progress_percentage|floatformat:0 }}% complete</p>
+                </div>
+                {% endif %}
+                
+                <div class="space-y-4">
+                    {% for module in modules %}
+                        <div class="bg-gray-700 rounded-lg overflow-hidden">
+                            <div class="bg-gray-700 px-4 py-3">
+                                <h3 class="font-semibold text-sm">{{ module.title }}</h3>
+                            </div>
+                            <div class="divide-y divide-gray-600">
+                                {% for l in module.lessons.all %}
+                                    <a href="{% url 'lesson_player' course.slug l.id %}" 
+                                       class="block px-4 py-3 hover:bg-gray-600 transition {% if l.id == lesson.id %}bg-gray-600{% endif %}">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-play-circle text-gray-400 mr-3 {% if l.id in completed_lessons %}text-green-400{% endif %}"></i>
+                                            <span class="text-sm">{{ l.title }}</span>
+                                            {% if l.is_preview %}
+                                                <span class="ml-auto text-xs bg-green-600 px-2 py-1 rounded">Preview</span>
+                                            {% endif %}
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('markCompleteBtn').addEventListener('click', function() {
+    const lessonId = this.dataset.lessonId;
+    fetch(`/lessons/api/mark-lesson-complete/${lessonId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+});
+</script>
+{% endblock %}

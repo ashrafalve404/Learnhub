@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Teaching Guidelines - LearnHub{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 py-12">
+    <div class="max-w-4xl mx-auto px-4">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">Teaching Guidelines</h1>
+        
+        <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Become an Instructor on LearnHub</h2>
+            <p class="text-gray-600 mb-6">
+                Welcome to LearnHub! We're excited that you're interested in sharing your knowledge with our community. 
+                This guide will help you understand how to create engaging courses and become a successful instructor.
+            </p>
+            
+            <h2 class="text-2xl font-bold mb-4">Getting Started</h2>
+            <ul class="space-y-3 text-gray-600 mb-6">
+                <li class="flex items-start">
+                    <span class="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1 text-sm font-bold">1</span>
+                    <span>Create your instructor profile with a professional photo and bio</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1 text-sm font-bold">2</span>
+                    <span>Submit your course proposal for review</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1 text-sm font-bold">3</span>
+                    <span>Once approved, start creating your course content</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1 text-sm font-bold">4</span>
+                    <span>Publish your course and start teaching!</span>
+                </li>
+            </ul>
+            
+            <h2 class="text-2xl font-bold mb-4">Course Content Requirements</h2>
+            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                <ul class="space-y-2 text-gray-600">
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Video quality: Minimum 720p HD resolution</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Audio: Clear audio without background noise</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Content: Original and educational</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Structure: Clear learning objectives</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Each course must have at least 5 lessons</li>
+                </ul>
+            </div>
+            
+            <h2 class="text-2xl font-bold mb-4">Best Practices</h2>
+            <ul class="space-y-3 text-gray-600 mb-6">
+                <li class="flex items-start">
+                    <i class="fas fa-star text-yellow-500 mt-1 mr-3"></i>
+                    <span><strong>Engage students</strong> - Use questions, examples, and real-world scenarios</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-star text-yellow-500 mt-1 mr-3"></i>
+                    <span><strong>Keep it organized</strong> - Break content into modules and lessons</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-star text-yellow-500 mt-1 mr-3"></i>
+                    <span><strong>Be consistent</strong> - Maintain a steady upload schedule</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-star text-yellow-500 mt-1 mr-3"></i>
+                    <span><strong>Respond to feedback</strong> - Listen to student reviews and improve</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-star text-yellow-500 mt-1 mr-3"></i>
+                    <span><strong>Add resources</strong> - Provide downloadable materials and exercises</span>
+                </li>
+            </ul>
+            
+            <h2 class="text-2xl font-bold mb-4">Revenue Share</h2>
+            <div class="bg-indigo-50 p-4 rounded-lg mb-6">
+                <p class="text-gray-700">
+                    Instructors earn <strong>70%</strong> of the course revenue, paid monthly via bank transfer or PayPal.
+                    Free courses help build your reputation and attract students to your paid courses.
+                </p>
+            </div>
+            
+            <h2 class="text-2xl font-bold mb-4">Quality Standards</h2>
+            <p class="text-gray-600 mb-4">
+                All courses must meet our quality standards. We reserve the right to unpublish courses that:
+            </p>
+            <ul class="list-disc list-inside text-gray-600 mb-6 space-y-1">
+                <li>Contain misleading or false information</li>
+                <li>Violate copyright or intellectual property rights</li>
+                <li>Contain inappropriate or offensive content</li>
+                <li>Are poorly produced or lack educational value</li>
+            </ul>
+            
+            <h2 class="text-2xl font-bold mb-4">Support</h2>
+            <p class="text-gray-600 mb-4">
+                If you have any questions or need help, our instructor support team is here to help. 
+                Contact us at <strong>instructors@learnhub.com</strong>
+            </p>
+        </div>
+        
+        <div class="text-center">
+            <a href="{% url 'register' %}" class="inline-block bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition">
+                Become an Instructor
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

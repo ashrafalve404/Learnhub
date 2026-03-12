@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - LearnHub{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 py-12">
+    <div class="max-w-4xl mx-auto px-4">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">About LearnHub</h1>
+        
+        <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Our Mission</h2>
+            <p class="text-gray-600 mb-6">
+                LearnHub is dedicated to providing high-quality education to learners worldwide. 
+                We believe that education should be accessible to everyone, regardless of their location or financial situation. 
+                Our platform connects expert instructors with eager learners, creating a community of growth and knowledge sharing.
+            </p>
+            
+            <h2 class="text-2xl font-bold mb-4">What We Offer</h2>
+            <ul class="space-y-3 text-gray-600 mb-6">
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                    <span>Expert-led video courses in various subjects</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                    <span>Lifetime access to enrolled courses</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                    <span>Certificates upon course completion</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                    <span>Learn at your own pace, anytime, anywhere</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                    <span>Community support and interactive learning</span>
+                </li>
+            </ul>
+            
+            <h2 class="text-2xl font-bold mb-4">Our Values</h2>
+            <div class="grid md:grid-cols-3 gap-6 mb-6">
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-graduation-cap text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="font-semibold">Quality Education</h3>
+                    <p class="text-sm text-gray-500 mt-2">We prioritize quality content from verified instructors</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-globe text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="font-semibold">Accessibility</h3>
+                    <p class="text-sm text-gray-500 mt-2">Education for everyone, everywhere</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-users text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="font-semibold">Community</h3>
+                    <p class="text-sm text-gray-500 mt-2">Building a supportive learning environment</p>
+                </div>
+            </div>
+            
+            <h2 class="text-2xl font-bold mb-4">Join Our Community</h2>
+            <p class="text-gray-600">
+                Whether you're looking to learn new skills or share your expertise, LearnHub is the perfect place for you. 
+                Join thousands of learners and instructors who are already part of our growing community.
+            </p>
+        </div>
+        
+        <div class="text-center">
+            <a href="{% url 'register' %}" class="inline-block bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition">
+                Get Started Today
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

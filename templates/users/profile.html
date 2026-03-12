@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - LearnHub{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">My Profile</h1>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="flex items-center mb-6">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" class="w-20 h-20 rounded-full object-cover mr-4">
+                    {% else %}
+                        <div class="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-3xl text-gray-500"></i>
+                        </div>
+                    {% endif %}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Change Avatar</label>
+                        <input type="file" name="avatar" accept="image/*" class="text-sm text-gray-500">
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <input type="text" name="first_name" value="{{ user.first_name }}" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <input type="text" name="last_name" value="{{ user.last_name }}" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" name="email" value="{{ user.email }}" class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                    <input type="text" name="phone" value="{{ user.phone|default:'' }}" class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                    <input type="text" name="address" value="{{ user.address|default:'' }}" class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                    <textarea name="bio" rows="4" class="w-full px-4 py-2 border rounded-lg">{{ user.bio|default:'' }}</textarea>
+                </div>
+                
+                <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Update Profile</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

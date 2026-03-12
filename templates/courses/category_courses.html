@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} Courses - LearnHub{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ category.name }}</h1>
+            <p class="text-gray-600">{{ category.description }}</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for course in page_obj %}
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+                    {% if course.thumbnail %}
+                        <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="w-full h-40 object-cover">
+                    {% else %}
+                        <div class="w-full h-40 bg-gray-200 flex items-center justify-center">
+                            <i class="fas fa-image text-3xl text-gray-400"></i>
+                        </div>
+                    {% endif %}
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-800 mb-1 line-clamp-2">{{ course.title }}</h3>
+                        <p class="text-sm text-gray-500 mb-2">{{ course.instructor.get_full_name|default:course.instructor.username }}</p>
+                        <div class="flex items-center text-sm text-gray-600 mb-2">
+                            <span class="bg-gray-100 px-2 py-1 rounded text-xs">{{ course.get_level_display }}</span>
+                        </div>
+                        <div class="flex items-center justify-between mt-3">
+                            {% if course.discount_price %}
+                                <div>
+                                    <span class="text-lg font-bold text-indigo-600">${{ course.discount_price }}</span>
+                                    <span class="text-sm text-gray-500 line-through">${{ course.price }}</span>
+                                </div>
+                            {% elif course.price == 0 %}
+                                <span class="text-lg font-bold text-green-600">Free</span>
+                            {% else %}
+                                <span class="text-lg font-bold text-indigo-600">${{ course.price }}</span>
+                            {% endif %}
+                            <a href="{% url 'course_detail' course.slug %}" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">View</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-gray-500 col-span-full text-center py-8">No courses found in this category.</p>
+            {% endfor %}
+        </div>
+        
+        {% if page_obj.has_other_pages %}
+        <div class="mt-8 flex justify-center">
+            <nav class="flex items-center space-x-2">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1" class="px-3 py-1 rounded bg-white hover:bg-gray-100">&laquo;</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 rounded bg-white hover:bg-gray-100">{{ page_obj.previous_page_number }}</a>
+                {% endif %}
+                <span class="px-3 py-1 rounded bg-indigo-600 text-white">{{ page_obj.number }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 rounded bg-white hover:bg-gray-100">{{ page_obj.next_page_number }}</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="px-3 py-1 rounded bg-white hover:bg-gray-100">&raquo;</a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

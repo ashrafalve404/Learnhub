@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LearnHub - Online Learning Platform{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <nav class="bg-white shadow-md" x-data="{ mobileMenuOpen: false }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{% url 'home' %}" class="flex items-center">
+                        <i class="fas fa-graduation-cap text-indigo-600 text-2xl mr-2"></i>
+                        <span class="font-bold text-xl text-gray-800">LearnHub</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="{% url 'course_list' %}" class="text-gray-600 hover:text-indigo-600 px-3 py-2">Courses</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'student_dashboard' %}" class="text-gray-600 hover:text-indigo-600 px-3 py-2">My Learning</a>
+                        {% if user.is_instructor %}
+                            <a href="{% url 'instructor_dashboard' %}" class="text-gray-600 hover:text-indigo-600 px-3 py-2">Instructor Dashboard</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <div class="relative" x-data="{ dropdownOpen: false }">
+                            <button @click="dropdownOpen = !dropdownOpen" class="flex items-center space-x-2 text-gray-600 hover:text-indigo-600">
+                                {% if user.avatar %}
+                                    <img src="{{ user.avatar.url }}" class="w-8 h-8 rounded-full object-cover">
+                                {% else %}
+                                    <i class="fas fa-user-circle text-xl"></i>
+                                {% endif %}
+                                <span>{{ user.username }}</span>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+                            <div x-show="dropdownOpen" @click.away="dropdownOpen = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                                <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+                                <a href="{% url 'my_courses' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Courses</a>
+                                <a href="{% url 'payment_history' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Purchase History</a>
+                                <hr class="my-1">
+                                <a href="{% url 'logout' %}" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-gray-600 hover:text-indigo-600 px-3 py-2">Login</a>
+                        <a href="{% url 'register' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Sign Up</a>
+                    {% endif %}
+                </div>
+                
+                <div class="flex items-center md:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div x-show="mobileMenuOpen" class="md:hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="{% url 'course_list' %}" class="block px-3 py-2 text-gray-600 hover:bg-gray-100">Courses</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'student_dashboard' %}" class="block px-3 py-2 text-gray-600 hover:bg-gray-100">My Learning</a>
+                    <a href="{% url 'profile' %}" class="block px-3 py-2 text-gray-600 hover:bg-gray-100">Profile</a>
+                    <a href="{% url 'logout' %}" class="block px-3 py-2 text-red-600 hover:bg-gray-100">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="block px-3 py-2 text-gray-600 hover:bg-gray-100">Login</a>
+                    <a href="{% url 'register' %}" class="block px-3 py-2 text-indigo-600 hover:bg-gray-100">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 py-4">
+                {% for message in messages %}
+                    <div class="mb-4 p-4 rounded-md {% if message.tags == 'error' %}bg-red-100 text-red-700{% elif message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="font-bold text-lg mb-4">LearnHub</h3>
+                    <p class="text-gray-400">Empowering learners worldwide with quality education.</p>
+                    <div class="flex gap-4 mt-4">
+                        <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="{% url 'course_list' %}" class="hover:text-white">All Courses</a></li>
+                        <li><a href="{% url 'about' %}" class="hover:text-white">About Us</a></li>
+                        <li><a href="{% url 'contact' %}" class="hover:text-white">Contact</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'student_dashboard' %}" class="hover:text-white">My Learning</a></li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}" class="hover:text-white">Login</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">For Instructors</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="{% url 'register' %}" class="hover:text-white">Become an Instructor</a></li>
+                        <li><a href="{% url 'teaching_guidelines' %}" class="hover:text-white">Teaching Guidelines</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">We Accept</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <div class="bg-white text-gray-800 px-3 py-1 rounded text-sm font-medium">
+                            <i class="fab fa-cc-visa text-blue-900"></i> Visa
+                        </div>
+                        <div class="bg-white text-gray-800 px-3 py-1 rounded text-sm font-medium">
+                            <i class="fab fa-cc-mastercard text-red-600"></i> Mastercard
+                        </div>
+                        <div class="bg-white text-gray-800 px-3 py-1 rounded text-sm font-medium">
+                            <i class="fab fa-cc-amex text-blue-600"></i> Amex
+                        </div>
+                        <div class="bg-white text-gray-800 px-3 py-1 rounded text-sm font-medium">
+                            <i class="fab fa-cc-paypal text-blue-700"></i> PayPal
+                        </div>
+                        <div class="bg-white text-gray-800 px-3 py-1 rounded text-sm font-medium">
+                            <i class="fab fa-apple-pay text-gray-800"></i> Apple Pay
+                        </div>
+                        <div class="bg-white text-gray-800 px-3 py-1 rounded text-sm font-medium">
+                            <i class="fab fa-google-pay text-gray-800"></i> Google Pay
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 LearnHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
